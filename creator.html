@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SilqueFans</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#0d0b0f;color:#f5f0e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2.5rem;border-bottom:0.5px solid rgba(201,116,122,0.2);position:sticky;top:0;background:#0d0b0f;z-index:100;}
+  .logo{font-size:1.4rem;font-weight:300;letter-spacing:0.14em;font-family:Georgia,serif;}
+  .logo span{color:#c9747a;}
+  .nav-links{display:flex;gap:1.25rem;align-items:center;}
+  .nav-btn{border:0.5px solid #c9747a;padding:0.45rem 1.1rem;font-size:11px;letter-spacing:0.1em;color:#c9747a;text-transform:uppercase;cursor:pointer;background:transparent;font-family:inherit;transition:all 0.2s;}
+  .nav-btn:hover{background:#c9747a;color:#0d0b0f;}
+  .nav-link{font-size:12px;color:rgba(245,240,232,0.4);letter-spacing:0.05em;}
+
+  /* LOADING */
+  .loading{display:flex;align-items:center;justify-content:center;min-height:60vh;}
+  .spinner{width:28px;height:28px;border:1.5px solid rgba(201,116,122,0.2);border-top-color:#c9747a;border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* NOT FOUND */
+  .not-found{text-align:center;padding:6rem 2rem;}
+  .not-found h1{font-family:Georgia,serif;font-size:2rem;font-weight:300;margin-bottom:1rem;}
+  .not-found p{color:rgba(245,240,232,0.4);font-size:14px;}
+
+  /* PROFILE HERO */
+  .profile-hero{border-bottom:0.5px solid rgba(201,116,122,0.15);}
+  .cover{height:180px;background:linear-gradient(135deg,#1a1520 0%,#2d2535 50%,#1a1520 100%);position:relative;}
+  .profile-body{max-width:760px;margin:0 auto;padding:0 2rem 2rem;}
+  .avatar-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:-40px;margin-bottom:1.25rem;}
+  .avatar{width:80px;height:80px;border-radius:50%;background:rgba(201,116,122,0.2);border:3px solid #0d0b0f;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#c9747a;font-family:Georgia,serif;flex-shrink:0;}
+  .subscribe-btn{background:#c9747a;color:#0d0b0f;border:none;padding:0.7rem 1.75rem;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:inherit;font-weight:500;transition:background 0.2s;}
+  .subscribe-btn:hover{background:#e8a0a5;}
+  .subscribe-btn.subscribed{background:transparent;border:0.5px solid rgba(201,116,122,0.4);color:#c9747a;}
+  .subscribe-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .display-name{font-family:Georgia,serif;font-size:1.5rem;font-weight:300;margin-bottom:0.25rem;}
+  .username{font-size:13px;color:rgba(245,240,232,0.4);margin-bottom:0.75rem;}
+  .bio{font-size:14px;color:rgba(245,240,232,0.6);line-height:1.7;max-width:520px;margin-bottom:1rem;}
+  .profile-meta{display:flex;gap:1.5rem;flex-wrap:wrap;}
+  .meta-item{font-size:12px;color:rgba(245,240,232,0.35);}
+  .meta-item strong{color:#f5f0e8;font-weight:500;}
+  .price-tag{display:inline-block;font-size:12px;color:#c9a96e;border:0.5px solid rgba(201,169,110,0.3);padding:0.25rem 0.75rem;margin-top:0.75rem;}
+
+  /* CONTENT */
+  .content-section{max-width:760px;margin:0 auto;padding:2rem;}
+  .section-title{font-size:10px;text-transform:uppercase;letter-spacing:0.2em;color:rgba(245,240,232,0.25);margin-bottom:1.5rem;}
+
+  /* POST CARD */
+  .post-card{border:0.5px solid rgba(201,116,122,0.15);padding:1.25rem;margin-bottom:1rem;transition:border-color 0.2s;}
+  .post-card:hover{border-color:rgba(201,116,122,0.3);}
+  .post-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;}
+  .post-type{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#c9747a;background:rgba(201,116,122,0.1);padding:0.2rem 0.5rem;}
+  .post-date{font-size:11px;color:rgba(245,240,232,0.25);}
+  .post-body{font-size:14px;color:rgba(245,240,232,0.75);line-height:1.7;}
+  .post-body.truncated{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+
+  /* LOCKED POST */
+  .locked-post{border:0.5px solid rgba(201,116,122,0.15);padding:1.25rem;margin-bottom:1rem;position:relative;overflow:hidden;}
+  .locked-preview{font-size:14px;color:rgba(245,240,232,0.2);line-height:1.7;filter:blur(4px);user-select:none;pointer-events:none;}
+  .locked-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,11,15,0.7);}
+  .lock-icon{font-size:1.5rem;margin-bottom:0.5rem;opacity:0.6;}
+  .lock-text{font-size:12px;color:rgba(245,240,232,0.5);text-align:center;line-height:1.6;}
+  .lock-price{font-size:13px;color:#c9a96e;margin-top:0.4rem;}
+
+  /* EMPTY */
+  .empty-posts{text-align:center;padding:4rem 2rem;color:rgba(245,240,232,0.2);font-size:13px;font-style:italic;font-family:Georgia,serif;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:2rem;right:2rem;background:#1a1520;border:0.5px solid rgba(201,116,122,0.3);color:#f5f0e8;padding:0.85rem 1.25rem;font-size:13px;display:none;z-index:999;}
+  .toast.show{display:block;}
+
+  @media(max-width:600px){
+    nav{padding:1rem 1.25rem;}
+    .profile-body{padding:0 1rem 1.5rem;}
+    .content-section{padding:1.5rem 1rem;}
+    .avatar{width:64px;height:64px;font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Silque<span>Fans</span></a>
+  <div class="nav-links">
+    <span class="nav-link" id="nav-user"></span>
+    <button class="nav-btn" id="nav-action" onclick="navAction()">Sign in</button>
+  </div>
+</nav>
+
+<div class="loading" id="loading"><div class="spinner"></div></div>
+
+<div id="profile-container" style="display:none;">
+  <div class="profile-hero">
+    <div class="cover" id="cover"></div>
+    <div class="profile-body">
+      <div class="avatar-row">
+        <div class="avatar" id="avatar"></div>
+        <button class="subscribe-btn" id="subscribe-btn" onclick="handleSubscribe()">Subscribe</button>
+      </div>
+      <h1 class="display-name" id="display-name"></h1>
+      <div class="username" id="username-display"></div>
+      <p class="bio" id="bio"></p>
+      <div class="profile-meta">
+        <div class="meta-item"><strong id="post-count">0</strong> posts</div>
+        <div class="meta-item"><strong id="sub-count">0</strong> subscribers</div>
+      </div>
+      <div class="price-tag" id="price-tag"></div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="section-title">Posts</div>
+    <div id="posts-container"></div>
+  </div>
+</div>
+
+<div class="not-found" id="not-found" style="display:none;">
+  <h1>Creator not found.</h1>
+  <p>This profile doesn't exist or may have been removed.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+let currentUser=null;
+let creatorProfile=null;
+let isSubscribed=false;
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function getUsername(){
+  const params=new URLSearchParams(window.location.search);
+  return params.get('u')||params.get('username');
+}
+
+function navAction(){
+  if(currentUser){
+    window.location.href='/dashboard.html';
+  }else{
+    window.location.href='/login.html';
+  }
+}
+
+async function checkSession(){
+  const{data:{session}}=await _sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    document.getElementById('nav-user').textContent='@'+(currentUser.email?.split('@')[0]||'');
+    document.getElementById('nav-action').textContent='Dashboard';
+  }
+}
+
+async function loadCreator(){
+  const username=getUsername();
+  if(!username){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('not-found').style.display='block';
+    return;
+  }
+
+  const{data:profile,error}=await _sb.from('profiles')
+    .select('*')
+    .eq('username',username)
+    .eq('account_type','creator')
+    .single();
+
+  if(error||!profile){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('not-found').style.display='block';
+    return;
+  }
+
+  creatorProfile=profile;
+  document.title=`${profile.display_name||profile.username} — SilqueFans`;
+
+  // Populate profile
+  const initial=(profile.display_name||profile.username||'?')[0].toUpperCase();
+  document.getElementById('avatar').textContent=initial;
+  document.getElementById('display-name').textContent=profile.display_name||profile.username;
+  document.getElementById('username-display').textContent='@'+profile.username;
+  document.getElementById('bio').textContent=profile.bio||'';
+  document.getElementById('price-tag').textContent=`Subscribe for $${profile.subscription_price||'9.99'}/month`;
+
+  // Check subscription status
+  if(currentUser){
+    const{data:sub}=await _sb.from('subscriptions')
+      .select('id,status')
+      .eq('fan_id',currentUser.id)
+      .eq('creator_id',profile.id)
+      .eq('status','active')
+      .single();
+    if(sub){
+      isSubscribed=true;
+      const btn=document.getElementById('subscribe-btn');
+      btn.textContent='Subscribed';
+      btn.classList.add('subscribed');
+    }
+    // Hide subscribe button if viewing own profile
+    if(currentUser.id===profile.id){
+      document.getElementById('subscribe-btn').style.display='none';
+    }
+  }
+
+  // Load posts
+  await loadPosts(profile.id);
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('profile-container').style.display='block';
+}
+
+async function loadPosts(creatorId){
+  const{data:posts}=await _sb.from('content')
+    .select('*')
+    .eq('creator_id',creatorId)
+    .eq('is_published',true)
+    .order('created_at',{ascending:false});
+
+  const container=document.getElementById('posts-container');
+  document.getElementById('post-count').textContent=posts?.length||0;
+
+  if(!posts||!posts.length){
+    container.innerHTML='<div class="empty-posts">No posts yet.</div>';
+    return;
+  }
+
+  container.innerHTML=posts.map(post=>{
+    const date=new Date(post.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    // Public posts — always visible
+    if(post.is_public){
+      return `<div class="post-card">
+        <div class="post-header">
+          <span class="post-type">${post.content_type}</span>
+          <span class="post-date">${date}</span>
+        </div>
+        <div class="post-body">${escapeHtml(post.body||post.title||'')}</div>
+      </div>`;
+    }
+    // Subscriber-only — show if subscribed
+    if(isSubscribed||currentUser?.id===creatorProfile?.id){
+      return `<div class="post-card">
+        <div class="post-header">
+          <span class="post-type">${post.content_type}</span>
+          <span class="post-date">${date}</span>
+        </div>
+        <div class="post-body">${escapeHtml(post.body||post.title||'')}</div>
+      </div>`;
+    }
+    // Locked
+    const preview=escapeHtml((post.body||post.title||'Subscribe to read this post. Support this creator directly.').substring(0,120));
+    return `<div class="locked-post">
+      <div class="post-header" style="margin-bottom:0.75rem;">
+        <span class="post-type">${post.content_type}</span>
+        <span class="post-date">${date}</span>
+      </div>
+      <div class="locked-preview">${preview}...</div>
+      <div class="locked-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-text">Subscribers only</div>
+        <div class="lock-price">$${creatorProfile?.subscription_price||'9.99'}/month</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function handleSubscribe(){
+  if(!currentUser){
+    window.location.href='/login.html?redirect='+encodeURIComponent(window.location.href);
+    return;
+  }
+  if(isSubscribed){
+    showToast('You are already subscribed.');
+    return;
+  }
+  // Payments not live yet — show coming soon
+  showToast('Subscriptions coming soon. Payments are being set up.');
+}
+
+async function init(){
+  await checkSession();
+  await loadCreator();
+}
+
+init();
+</script>
+</body>
+</html>
