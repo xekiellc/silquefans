@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — SilqueFans</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#0d0b0f;color:#f5f0e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+  a{color:inherit;text-decoration:none;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2.5rem;border-bottom:0.5px solid rgba(201,116,122,0.2);}
+  .logo{font-size:1.4rem;font-weight:300;letter-spacing:0.14em;font-family:Georgia,serif;}
+  .logo span{color:#c9747a;}
+  .main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
+  .card{width:100%;max-width:460px;}
+  .card-title{font-family:Georgia,serif;font-size:1.75rem;font-weight:300;margin-bottom:0.5rem;}
+  .card-sub{font-size:13px;color:rgba(245,240,232,0.45);margin-bottom:2rem;line-height:1.6;}
+  .account-toggle{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:2rem;border:0.5px solid rgba(201,116,122,0.25);}
+  .toggle-btn{padding:0.85rem;text-align:center;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;background:transparent;color:rgba(245,240,232,0.4);border:none;font-family:inherit;transition:all 0.2s;}
+  .toggle-btn.active{background:rgba(201,116,122,0.15);color:#c9747a;}
+  .toggle-btn:first-child{border-right:0.5px solid rgba(201,116,122,0.25);}
+  .field{margin-bottom:1.25rem;}
+  .field label{display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.45);margin-bottom:0.5rem;}
+  .field input{width:100%;background:rgba(245,240,232,0.06);border:0.5px solid rgba(201,116,122,0.25);color:#f5f0e8;padding:0.85rem 1rem;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;}
+  .field input:focus{border-color:#c9747a;}
+  .field input::placeholder{color:rgba(245,240,232,0.25);}
+  .field-hint{font-size:11px;color:rgba(245,240,232,0.25);margin-top:0.4rem;}
+  .btn{width:100%;background:#c9747a;color:#0d0b0f;border:none;padding:0.9rem;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:inherit;font-weight:500;transition:background 0.2s;margin-top:0.5rem;}
+  .btn:hover{background:#e8a0a5;}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .terms{font-size:11px;color:rgba(245,240,232,0.25);margin-top:1rem;line-height:1.7;text-align:center;}
+  .terms a{color:rgba(201,116,122,0.6);}
+  .link-row{text-align:center;font-size:13px;color:rgba(245,240,232,0.35);margin-top:1.5rem;}
+  .link-row a{color:#c9747a;}
+  .error-msg{background:rgba(201,116,122,0.1);border:0.5px solid rgba(201,116,122,0.4);color:#e8a0a5;padding:0.75rem 1rem;font-size:13px;margin-bottom:1rem;display:none;}
+  .success-msg{background:rgba(201,169,110,0.1);border:0.5px solid rgba(201,169,110,0.4);color:#c9a96e;padding:0.75rem 1rem;font-size:13px;margin-bottom:1rem;display:none;line-height:1.6;}
+  .creator-note{background:rgba(201,169,110,0.06);border:0.5px solid rgba(201,169,110,0.2);padding:0.85rem 1rem;font-size:12px;color:rgba(201,169,110,0.7);margin-bottom:1.5rem;line-height:1.6;display:none;}
+  footer{padding:1.5rem 2.5rem;border-top:0.5px solid rgba(201,116,122,0.1);text-align:center;}
+  .footer-logo{font-family:Georgia,serif;font-size:0.9rem;font-weight:300;letter-spacing:0.12em;color:rgba(245,240,232,0.2);}
+  .footer-logo span{color:rgba(201,116,122,0.4);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Silque<span>Fans</span></a>
+  <a href="/login.html" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.45);">Sign in</a>
+</nav>
+
+<div class="main">
+  <div class="card">
+    <h1 class="card-title">Create your account.</h1>
+    <p class="card-sub">Join as a creator or a fan. No restrictions on legal content.</p>
+
+    <div class="account-toggle">
+      <button class="toggle-btn active" id="btn-fan" onclick="setType('fan')">I'm a fan</button>
+      <button class="toggle-btn" id="btn-creator" onclick="setType('creator')">I'm a creator</button>
+    </div>
+
+    <div class="creator-note" id="creator-note">
+      Founding creator status — first 100 creators lock in 5% platform fee forever. You're early.
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+    <div class="success-msg" id="success-msg"></div>
+
+    <div class="field">
+      <label>Display name</label>
+      <input type="text" id="display-name" placeholder="How you appear on the platform">
+    </div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="yourname" oninput="sanitizeUsername(this)">
+      <div class="field-hint">silquefans.com/<span id="username-preview">yourname</span></div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Minimum 8 characters" autocomplete="new-password">
+    </div>
+
+    <button class="btn" id="signup-btn" onclick="handleSignup()">Create account</button>
+
+    <p class="terms">
+      By creating an account you agree to our
+      <a href="/terms.html">Terms of Service</a> and
+      <a href="/privacy.html">Privacy Policy</a>.
+      You confirm you are 18 years of age or older.
+    </p>
+
+    <div class="link-row">
+      Already have an account? <a href="/login.html">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Silque<span>Fans</span></div>
+</footer>
+
+<script>
+  const SUPABASE_URL = 'https://xeymbpxllgxyxzwsypcp.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let accountType = 'fan';
+
+  function setType(type){
+    accountType = type;
+    document.getElementById('btn-fan').classList.toggle('active', type==='fan');
+    document.getElementById('btn-creator').classList.toggle('active', type==='creator');
+    document.getElementById('creator-note').style.display = type==='creator' ? 'block' : 'none';
+  }
+
+  function sanitizeUsername(input){
+    input.value = input.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
+    document.getElementById('username-preview').textContent = input.value || 'yourname';
+  }
+
+  function showError(msg){
+    const el=document.getElementById('error-msg');
+    el.textContent=msg;
+    el.style.display='block';
+    document.getElementById('success-msg').style.display='none';
+  }
+
+  function showSuccess(msg){
+    const el=document.getElementById('success-msg');
+    el.innerHTML=msg;
+    el.style.display='block';
+    document.getElementById('error-msg').style.display='none';
+  }
+
+  async function handleSignup(){
+    const displayName=document.getElementById('display-name').value.trim();
+    const username=document.getElementById('username').value.trim();
+    const email=document.getElementById('email').value.trim();
+    const password=document.getElementById('password').value;
+    const btn=document.getElementById('signup-btn');
+
+    if(!displayName){showError('Please enter a display name.');return;}
+    if(!username||username.length<3){showError('Username must be at least 3 characters.');return;}
+    if(!email){showError('Please enter your email.');return;}
+    if(!password||password.length<8){showError('Password must be at least 8 characters.');return;}
+
+    btn.disabled=true;
+    btn.textContent='Creating account...';
+
+    // Check username availability
+    const{data:existing}=await supabase
+      .from('profiles')
+      .select('username')
+      .eq('username',username)
+      .single();
+
+    if(existing){
+      showError('That username is already taken. Please choose another.');
+      btn.disabled=false;
+      btn.textContent='Create account';
+      return;
+    }
+
+    const{data,error}=await supabase.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{
+          username,
+          full_name:displayName,
+          account_type:accountType
+        }
+      }
+    });
+
+    if(error){
+      showError(error.message);
+      btn.disabled=false;
+      btn.textContent='Create account';
+      return;
+    }
+
+    // Update profile with account type
+    if(data.user){
+      await supabase
+        .from('profiles')
+        .update({account_type:accountType,display_name:displayName})
+        .eq('id',data.user.id);
+    }
+
+    showSuccess('Account created! Check your email to confirm your address, then <a href="/login.html" style="color:#c9a96e;">sign in here</a>.');
+    btn.textContent='Account created';
+  }
+
+  // Redirect if already logged in
+  supabase.auth.getSession().then(({data:{session}})=>{
+    if(session)window.location.href='/dashboard.html';
+  });
+</script>
+
+</body>
+</html>
