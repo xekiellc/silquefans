@@ -17,26 +17,26 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   :root{
-    --bg:#f7f2ee;
-    --bg2:#f2ebe6;
-    --white:#fffcfa;
+    --bg:#f2ede9;
+    --bg2:#ede7e2;
+    --white:#faf6f3;
     --pink:#c9829a;
     --pink-dark:#a8607c;
     --pink-light:#e8b4c4;
-    --pink-dim:rgba(201,130,154,0.12);
+    --pink-dim:rgba(201,130,154,0.1);
     --ink:#1e1118;
     --ink-60:rgba(30,17,24,0.6);
     --ink-35:rgba(30,17,24,0.35);
     --ink-15:rgba(30,17,24,0.15);
     --ink-08:rgba(30,17,24,0.08);
-    --border:rgba(201,130,154,0.18);
+    --border:rgba(201,130,154,0.2);
   }
   body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
   a{color:inherit;text-decoration:none;}
 
   /* NAV */
-  nav{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 3rem;background:var(--bg);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
-  .nav-logo img{height:48px;width:auto;display:block;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 3rem;background:var(--bg);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
+  .nav-logo img{height:52px;width:auto;display:block;mix-blend-mode:multiply;}
   .nav-links{display:flex;gap:2rem;align-items:center;}
   .nav-link{font-size:11px;letter-spacing:0.1em;color:var(--ink-35);text-transform:uppercase;font-weight:400;transition:color 0.2s;}
   .nav-link:hover{color:var(--ink);}
@@ -44,11 +44,11 @@
   .nav-cta:hover{background:var(--pink-dark);}
 
   /* HERO */
-  .hero{padding:5rem 3rem 4rem;text-align:center;background:var(--bg);}
-  .hero-logo{margin:0 auto 2.5rem;width:min(540px,80vw);}
+  .hero{padding:3rem 3rem 4rem;text-align:center;background:var(--bg);}
+  .hero-logo{margin:0 auto 1.5rem;width:min(480px,70vw);position:relative;}
   .hero-logo img{width:100%;height:auto;display:block;mix-blend-mode:multiply;}
-  .hero-tag{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-style:italic;color:var(--pink);letter-spacing:0.06em;margin-bottom:1.5rem;display:block;}
-  .hero-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3.25rem;font-weight:300;line-height:1.1;color:var(--ink);margin-bottom:1rem;letter-spacing:-0.01em;}
+  .hero-tag{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-style:italic;color:var(--pink);letter-spacing:0.06em;margin-bottom:1.25rem;display:block;}
+  .hero-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;color:var(--ink);margin-bottom:1rem;letter-spacing:-0.01em;}
   .hero-title em{font-style:italic;color:var(--pink);}
   .hero-sub{font-size:15px;color:var(--ink-60);max-width:420px;margin:0 auto 2.5rem;line-height:1.85;font-weight:300;}
 
@@ -79,7 +79,7 @@
   .section-body{font-size:15px;color:var(--ink-60);line-height:1.85;font-weight:300;max-width:500px;}
 
   /* CREATORS */
-  .creators{background:var(--white);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
+  .creators-section{background:var(--white);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
   .creators-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
   .creator-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
   .creator-card{background:var(--white);padding:1.5rem;transition:background 0.2s;}
@@ -89,7 +89,6 @@
 
   /* RULES */
   .rules-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start;}
-  .rules-list{margin-top:1rem;}
   .rule{display:flex;gap:1.5rem;padding:1.5rem 0;border-bottom:0.5px solid var(--ink-08);}
   .rule:last-child{border-bottom:none;}
   .rule-num{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;font-weight:300;color:var(--pink-light);flex-shrink:0;line-height:1;}
@@ -98,19 +97,19 @@
   .rules-quote{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.2rem;font-style:italic;color:var(--ink-60);border-left:1px solid var(--pink-light);padding-left:1.5rem;line-height:1.7;margin-top:2rem;}
 
   /* COMPARE */
-  .compare{background:var(--white);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
+  .compare-section{background:var(--white);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
   .compare-inner{max-width:700px;margin:0 auto;}
   .compare-table{width:100%;border-collapse:collapse;margin-top:2.5rem;font-size:13px;}
   .compare-table th{text-align:left;padding:0.75rem 1rem;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-35);border-bottom:0.5px solid var(--border);font-weight:400;}
   .compare-table td{padding:1rem;border-bottom:0.5px solid var(--ink-08);color:var(--ink-60);}
   .compare-table tr.us td{background:var(--pink-dim);color:var(--ink);}
   .compare-table tr.us td:first-child{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--pink-dark);font-size:15px;}
-  .yes{color:var(--pink) !important;font-weight:500;}
-  .no{color:var(--ink-35) !important;}
+  .yes{color:var(--pink)!important;font-weight:500;}
+  .no{color:var(--ink-35)!important;}
 
   /* CTA */
-  .cta{padding:8rem 3rem;text-align:center;background:var(--bg);}
-  .cta-logo{margin:0 auto 2rem;width:min(400px,70vw);}
+  .cta-section{padding:7rem 3rem;text-align:center;background:var(--bg);}
+  .cta-logo{margin:0 auto 2rem;width:min(360px,60vw);}
   .cta-logo img{width:100%;height:auto;mix-blend-mode:multiply;}
   .cta-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;margin-bottom:1rem;letter-spacing:-0.01em;}
   .cta-title em{font-style:italic;color:var(--pink);}
@@ -121,27 +120,27 @@
 
   /* FOOTER */
   footer{border-top:0.5px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;background:var(--bg);}
-  .footer-logo img{height:32px;width:auto;mix-blend-mode:multiply;}
+  .footer-logo img{height:36px;width:auto;mix-blend-mode:multiply;}
   .footer-links{display:flex;gap:1.5rem;}
   .footer-link{font-size:11px;color:var(--ink-35);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;}
   .footer-link:hover{color:var(--ink);}
   .footer-copy{font-family:'Cormorant Garamond',Georgia,serif;font-size:12px;font-style:italic;color:var(--ink-35);}
 
   @media(max-width:768px){
-    nav{padding:0.75rem 1.5rem;}
-    .nav-logo img{height:36px;}
+    nav{padding:0.6rem 1.5rem;}
+    .nav-logo img{height:40px;}
     .nav-links .nav-link{display:none;}
-    .hero{padding:3rem 1.5rem 3rem;}
-    .hero-logo{width:min(320px,85vw);}
+    .hero{padding:2.5rem 1.5rem 3rem;}
+    .hero-logo{width:min(300px,80vw);}
     .hero-title{font-size:2.25rem;}
     .form-row{flex-direction:column;}
-    .metrics{grid-template-columns:1fr;border:none;}
+    .metrics{grid-template-columns:1fr;}
     .metric{border-right:none;border-bottom:0.5px solid var(--border);}
     .section{padding:4rem 1.5rem;}
     .creators-inner{grid-template-columns:1fr;gap:2.5rem;}
     .creator-grid{grid-template-columns:1fr;}
     .rules-inner{grid-template-columns:1fr;gap:2.5rem;}
-    .cta{padding:5rem 1.5rem;}
+    .cta-section{padding:5rem 1.5rem;}
     footer{flex-direction:column;text-align:center;}
   }
 </style>
@@ -158,7 +157,6 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-logo">
     <img src="/image.jpg" alt="SilqueFans">
@@ -166,7 +164,6 @@
   <span class="hero-tag">— founding creator applications open —</span>
   <h1 class="hero-title">Your fans. Your terms.<br><em>Your 90%.</em></h1>
   <p class="hero-sub">The creator platform built for voices the payment processors won't touch. Three rules. Everything else is yours.</p>
-
   <div class="hero-form" id="waitlist">
     <form class="form-row" name="silquefans-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
       <input type="hidden" name="form-name" value="silquefans-waitlist">
@@ -180,7 +177,6 @@
   </div>
 </section>
 
-<!-- METRICS -->
 <div class="metrics">
   <div class="metric">
     <div class="metric-num">90%</div>
@@ -199,8 +195,7 @@
   </div>
 </div>
 
-<!-- FOR CREATORS -->
-<section class="section creators" id="creators">
+<section class="section creators-section" id="creators">
   <div class="creators-inner">
     <div>
       <span class="section-tag">who we serve</span>
@@ -208,7 +203,7 @@
       <p class="section-body">Every creator on this platform was deplatformed, demonetized, or debanked for legal content. That ends here.</p>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;">
         <a href="/signup.html" style="background:var(--pink);color:#fff;padding:0.75rem 1.75rem;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;border-radius:100px;transition:background 0.2s;" onmouseover="this.style.background='#a8607c'" onmouseout="this.style.background='#c9829a'">Create your account</a>
-        <a href="/explore.html" style="border:0.5px solid var(--border);color:var(--ink-60);padding:0.75rem 1.75rem;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;border-radius:100px;transition:all 0.2s;">Browse creators</a>
+        <a href="/explore.html" style="border:0.5px solid var(--border);color:var(--ink-60);padding:0.75rem 1.75rem;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;border-radius:100px;transition:all 0.2s;" onmouseover="this.style.borderColor='#c9829a'" onmouseout="this.style.borderColor='rgba(201,130,154,0.2)'">Browse creators</a>
       </div>
     </div>
     <div class="creator-grid">
@@ -232,13 +227,12 @@
   </div>
 </section>
 
-<!-- THREE RULES -->
 <section class="section" id="rules" style="background:var(--bg);">
   <div class="rules-inner">
     <div>
       <span class="section-tag">the platform rules</span>
       <h2 class="section-title">Three rules.<br><em>Everything else is yours.</em></h2>
-      <div class="rules-list">
+      <div style="margin-top:1rem;">
         <div class="rule">
           <div class="rule-num">01</div>
           <div>
@@ -270,8 +264,7 @@
   </div>
 </section>
 
-<!-- COMPARE -->
-<section class="section compare">
+<section class="section compare-section">
   <div class="compare-inner">
     <span class="section-tag">how we compare</span>
     <h2 class="section-title">The math is <em>simple.</em></h2>
@@ -314,8 +307,7 @@
   </div>
 </section>
 
-<!-- BOTTOM CTA -->
-<section class="cta">
+<section class="cta-section">
   <div class="cta-logo">
     <img src="/image.jpg" alt="SilqueFans">
   </div>
