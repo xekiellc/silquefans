@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Explore Creators — SilqueFans</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NPB5Q7NTE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1NPB5Q7NTE');</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -49,7 +51,6 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="/" class="logo">Silque<span>Fans</span></a>
   <div class="nav-links">
@@ -57,7 +58,6 @@
     <button class="nav-btn" id="nav-action" onclick="navAction()">Sign in</button>
   </div>
 </nav>
-
 <div class="hero">
   <h1 class="hero-title">Explore creators.</h1>
   <p class="hero-sub">Support the voices the payment processors won't touch.</p>
@@ -65,7 +65,6 @@
     <input class="search-input" type="text" id="search" placeholder="Search creators..." oninput="filterCreators()">
   </div>
 </div>
-
 <div class="main">
   <div class="loading" id="loading"><div class="spinner"></div></div>
   <div id="grid-container" style="display:none;">
@@ -73,78 +72,44 @@
     <div class="creator-grid" id="creator-grid"></div>
   </div>
 </div>
-
 <script>
 const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
 let allCreators=[];
-
-function navAction(){
-  const u=document.getElementById('nav-user').textContent;
-  window.location.href=u?'/dashboard.html':'/login.html';
-}
-
+function navAction(){const u=document.getElementById('nav-user').textContent;window.location.href=u?'/dashboard.html':'/login.html';}
 function renderGrid(creators){
   const grid=document.getElementById('creator-grid');
   const label=document.getElementById('grid-label');
   label.textContent=creators.length+' creator'+(creators.length!==1?'s':'');
-  if(!creators.length){
-    grid.innerHTML='<div class="empty" style="grid-column:1/-1;">No creators found.</div>';
-    return;
-  }
+  if(!creators.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;">No creators found.</div>';return;}
   grid.innerHTML=creators.map(c=>{
     const initial=(c.display_name||c.username||'?')[0].toUpperCase();
     const bio=c.bio?c.bio.substring(0,100):'Independent creator on SilqueFans.';
     return`<a class="creator-card" href="/creator.html?u=${c.username}">
       <div class="card-top">
         <div class="card-avatar">${initial}</div>
-        <div>
-          <div class="card-name">${c.display_name||c.username}</div>
-          <div class="card-username">@${c.username}</div>
-        </div>
+        <div><div class="card-name">${c.display_name||c.username}</div><div class="card-username">@${c.username}</div></div>
       </div>
       <div class="card-bio">${bio}</div>
-      <div class="card-footer">
-        <span class="card-price">$${c.subscription_price||'9.99'}/mo</span>
-        <span class="card-posts">${c.post_count||0} posts</span>
-      </div>
+      <div class="card-footer"><span class="card-price">$${c.subscription_price||'9.99'}/mo</span><span class="card-posts">${c.post_count||0} posts</span></div>
     </a>`;
   }).join('');
 }
-
 function filterCreators(){
   const q=document.getElementById('search').value.toLowerCase().trim();
   if(!q){renderGrid(allCreators);return;}
-  const filtered=allCreators.filter(c=>
-    (c.display_name||'').toLowerCase().includes(q)||
-    (c.username||'').toLowerCase().includes(q)||
-    (c.bio||'').toLowerCase().includes(q)
-  );
-  renderGrid(filtered);
+  renderGrid(allCreators.filter(c=>(c.display_name||'').toLowerCase().includes(q)||(c.username||'').toLowerCase().includes(q)||(c.bio||'').toLowerCase().includes(q)));
 }
-
 async function init(){
   const{data:{session}}=await _sb.auth.getSession();
-  if(session){
-    document.getElementById('nav-user').textContent='@'+(session.user.email?.split('@')[0]||'');
-    document.getElementById('nav-action').textContent='Dashboard';
-  }
-
-  const{data:creators}=await _sb
-    .from('profiles')
-    .select('*')
-    .eq('account_type','creator')
-    .eq('is_suspended',false)
-    .order('created_at',{ascending:false});
-
+  if(session){document.getElementById('nav-user').textContent='@'+(session.user.email?.split('@')[0]||'');document.getElementById('nav-action').textContent='Dashboard';}
+  const{data:creators}=await _sb.from('profiles').select('*').eq('account_type','creator').eq('is_suspended',false).order('created_at',{ascending:false});
   allCreators=creators||[];
   document.getElementById('loading').style.display='none';
   document.getElementById('grid-container').style.display='block';
   renderGrid(allCreators);
 }
-
 init();
 </script>
 </body>
