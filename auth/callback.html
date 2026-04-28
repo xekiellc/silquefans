@@ -38,56 +38,35 @@
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://xeymbpxllgxyxzwsypcp.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-  async function handleCallback(){
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const searchParams = new URLSearchParams(window.location.search);
-
-    const accessToken = hashParams.get('access_token');
-    const refreshToken = hashParams.get('refresh_token');
-    const errorParam = searchParams.get('error') || hashParams.get('error');
-    const errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
-
-    if(errorParam){
-      document.getElementById('loading-state').style.display='none';
-      document.getElementById('error-state').style.display='block';
-      document.getElementById('error-text').textContent = errorDescription || 'Confirmation failed. Please try again.';
-      return;
-    }
-
-    if(accessToken){
-      const{data,error}=await supabase.auth.setSession({
-        access_token:accessToken,
-        refresh_token:refreshToken
-      });
-      if(error){
-        document.getElementById('loading-state').style.display='none';
-        document.getElementById('error-state').style.display='block';
-        return;
-      }
-      if(data.session){
-        window.location.href='/dashboard.html';
-        return;
-      }
-    }
-
-    // Try getting session from URL (newer Supabase PKCE flow)
-    const{data:{session},error}=await supabase.auth.getSession();
-    if(session){
-      window.location.href='/dashboard.html';
-      return;
-    }
-
-    // No token found
+async function handleCallback(){
+  const hashParams=new URLSearchParams(window.location.hash.substring(1));
+  const searchParams=new URLSearchParams(window.location.search);
+  const accessToken=hashParams.get('access_token');
+  const refreshToken=hashParams.get('refresh_token');
+  const errorParam=searchParams.get('error')||hashParams.get('error');
+  const errorDescription=searchParams.get('error_description')||hashParams.get('error_description');
+  if(errorParam){
     document.getElementById('loading-state').style.display='none';
     document.getElementById('error-state').style.display='block';
+    document.getElementById('error-text').textContent=errorDescription||'Confirmation failed. Please try again.';
+    return;
   }
+  if(accessToken){
+    const{data,error}=await _sb.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
+    if(error){document.getElementById('loading-state').style.display='none';document.getElementById('error-state').style.display='block';return;}
+    if(data.session){window.location.href='/dashboard.html';return;}
+  }
+  const{data:{session},error}=await _sb.auth.getSession();
+  if(session){window.location.href='/dashboard.html';return;}
+  document.getElementById('loading-state').style.display='none';
+  document.getElementById('error-state').style.display='block';
+}
 
-  handleCallback();
+handleCallback();
 </script>
-
 </body>
 </html>
