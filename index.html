@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SilqueFans — Your Fans. Your Terms. Your 90%.</title>
+<meta name="description" content="The creator monetization platform built for voices the payment processors won't touch. 90/10 split. Crypto payouts. Three rules. Everything else is yours.">
+<meta property="og:title" content="SilqueFans — Your Fans. Your Terms. Your 90%.">
+<meta property="og:description" content="90/10 split. Crypto payouts. Three rules. Founding creator applications open.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://silquefans.com">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:#0d0b0f;
+    color:#f5f0e8;
+    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* NAV */
+  nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1.25rem 2.5rem;
+    border-bottom:0.5px solid rgba(201,116,122,0.2);
+    position:sticky;
+    top:0;
+    background:#0d0b0f;
+    z-index:100;
+  }
+  .logo{
+    font-size:1.5rem;
+    font-weight:300;
+    letter-spacing:0.14em;
+    color:#f5f0e8;
+    font-family:Georgia,'Times New Roman',serif;
+  }
+  .logo span{color:#c9747a;}
+  .nav-links{display:flex;gap:2rem;align-items:center;}
+  .nav-link{
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:rgba(245,240,232,0.45);
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:color 0.2s;
+  }
+  .nav-link:hover{color:#f5f0e8;}
+  .nav-cta{
+    border:0.5px solid #c9747a;
+    padding:0.45rem 1.1rem;
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:#c9747a;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all 0.2s;
+    background:transparent;
+    font-family:inherit;
+  }
+  .nav-cta:hover{background:#c9747a;color:#0d0b0f;}
+
+  /* HERO */
+  .hero{
+    padding:6rem 2rem 5rem;
+    text-align:center;
+    position:relative;
+  }
+  .hero-eyebrow{
+    font-size:10px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:#c9747a;
+    margin-bottom:1.75rem;
+    opacity:0.9;
+  }
+  .hero-title{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:3.5rem;
+    font-weight:300;
+    line-height:1.1;
+    color:#f5f0e8;
+    margin-bottom:1.5rem;
+    max-width:640px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .hero-title em{
+    font-style:italic;
+    color:#c9a96e;
+  }
+  .hero-sub{
+    font-size:15px;
+    color:rgba(245,240,232,0.5);
+    max-width:400px;
+    margin:0 auto 2.75rem;
+    line-height:1.8;
+  }
+
+  /* FORM */
+  .waitlist-form{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:1.25rem;
+  }
+  .waitlist-form input[type="text"],
+  .waitlist-form input[type="email"]{
+    background:rgba(245,240,232,0.06);
+    border:0.5px solid rgba(201,116,122,0.35);
+    color:#f5f0e8;
+    padding:0.8rem 1.25rem;
+    font-size:13px;
+    width:220px;
+    outline:none;
+    font-family:inherit;
+    transition:border-color 0.2s;
+  }
+  .waitlist-form input::placeholder{color:rgba(245,240,232,0.3);}
+  .waitlist-form input:focus{border-color:#c9747a;}
+  .waitlist-form button{
+    background:#c9747a;
+    color:#0d0b0f;
+    border:none;
+    padding:0.8rem 1.75rem;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:500;
+    transition:background 0.2s;
+  }
+  .waitlist-form button:hover{background:#e8a0a5;}
+  .form-note{
+    font-size:11px;
+    color:rgba(245,240,232,0.25);
+    letter-spacing:0.05em;
+  }
+
+  /* SUCCESS STATE */
+  .success-msg{
+    display:none;
+    background:rgba(201,169,110,0.1);
+    border:0.5px solid rgba(201,169,110,0.4);
+    color:#c9a96e;
+    padding:1rem 2rem;
+    font-size:13px;
+    letter-spacing:0.05em;
+    max-width:480px;
+    margin:0 auto;
+    text-align:center;
+  }
+
+  /* STATS BAR */
+  .stats-bar{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    border-top:0.5px solid rgba(201,116,122,0.15);
+    border-bottom:0.5px solid rgba(201,116,122,0.15);
+    background:#0d0b0f;
+  }
+  .stat{
+    padding:2.25rem 1.5rem;
+    text-align:center;
+    border-right:0.5px solid rgba(201,116,122,0.15);
+  }
+  .stat:last-child{border-right:none;}
+  .stat-number{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:2.5rem;
+    font-weight:300;
+    color:#c9a96e;
+    margin-bottom:0.4rem;
+  }
+  .stat-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:rgba(245,240,232,0.35);
+    margin-bottom:0.5rem;
+  }
+  .stat-desc{
+    font-size:12px;
+    color:rgba(245,240,232,0.3);
+    line-height:1.6;
+    max-width:180px;
+    margin:0 auto;
+  }
+
+  /* WHO SECTION */
+  .section{padding:4rem 2rem;}
+  .section-label{
+    font-size:10px;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:rgba(245,240,232,0.25);
+    text-align:center;
+    margin-bottom:2.5rem;
+  }
+  .creator-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1rem;
+    max-width:600px;
+    margin:0 auto;
+  }
+  .creator-card{
+    border:0.5px solid rgba(201,116,122,0.2);
+    padding:1.25rem 1.5rem;
+    transition:border-color 0.2s;
+  }
+  .creator-card:hover{border-color:rgba(201,116,122,0.5);}
+  .creator-type{
+    font-size:10px;
+    color:#c9747a;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    margin-bottom:0.5rem;
+  }
+  .creator-desc{
+    font-size:12px;
+    color:rgba(245,240,232,0.38);
+    line-height:1.7;
+  }
+
+  /* RULES SECTION */
+  .rules-section{
+    padding:4rem 2rem;
+    border-top:0.5px solid rgba(201,116,122,0.15);
+    text-align:center;
+  }
+  .rules-title{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:1.75rem;
+    font-weight:300;
+    color:#f5f0e8;
+    margin-bottom:0.75rem;
+  }
+  .rules-sub{
+    font-size:13px;
+    color:rgba(245,240,232,0.4);
+    margin-bottom:2.5rem;
+    max-width:420px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .rules-list{
+    display:flex;
+    flex-direction:column;
+    gap:0.75rem;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .rule{
+    display:flex;
+    align-items:flex-start;
+    gap:1rem;
+    text-align:left;
+    padding:1rem 1.25rem;
+    border:0.5px solid rgba(201,116,122,0.15);
+  }
+  .rule-num{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:1.1rem;
+    color:#c9747a;
+    opacity:0.6;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  .rule-text{
+    font-size:13px;
+    color:rgba(245,240,232,0.5);
+    line-height:1.7;
+  }
+  .rule-text strong{
+    color:rgba(245,240,232,0.85);
+    font-weight:500;
+  }
+  .rules-footer{
+    margin-top:1.5rem;
+    font-size:12px;
+    color:rgba(245,240,232,0.25);
+    font-style:italic;
+    font-family:Georgia,serif;
+  }
+
+  /* COMPARE SECTION */
+  .compare-section{
+    padding:4rem 2rem;
+    border-top:0.5px solid rgba(201,116,122,0.15);
+  }
+  .compare-table{
+    width:100%;
+    max-width:580px;
+    margin:0 auto;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .compare-table th{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:rgba(245,240,232,0.3);
+    padding:0.75rem 1rem;
+    text-align:left;
+    border-bottom:0.5px solid rgba(201,116,122,0.2);
+    font-weight:400;
+  }
+  .compare-table td{
+    padding:0.85rem 1rem;
+    border-bottom:0.5px solid rgba(245,240,232,0.05);
+    color:rgba(245,240,232,0.45);
+  }
+  .compare-table tr.highlight td{
+    color:#f5f0e8;
+    background:rgba(201,116,122,0.06);
+  }
+  .compare-table tr.highlight td:first-child{
+    color:#c9747a;
+    font-family:Georgia,serif;
+  }
+  .yes{color:#c9a96e !important;}
+  .no{color:rgba(245,240,232,0.2) !important;}
+
+  /* BOTTOM CTA */
+  .bottom-cta{
+    padding:5rem 2rem;
+    text-align:center;
+    border-top:0.5px solid rgba(201,116,122,0.15);
+  }
+  .bottom-cta-title{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:2.25rem;
+    font-weight:300;
+    color:#f5f0e8;
+    margin-bottom:1rem;
+  }
+  .bottom-cta-sub{
+    font-size:14px;
+    color:rgba(245,240,232,0.4);
+    margin-bottom:2.5rem;
+  }
+
+  /* FOOTER */
+  footer{
+    border-top:0.5px solid rgba(201,116,122,0.12);
+    padding:1.75rem 2.5rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+  .footer-logo{
+    font-family:Georgia,serif;
+    font-size:1rem;
+    font-weight:300;
+    letter-spacing:0.12em;
+    color:rgba(245,240,232,0.3);
+  }
+  .footer-logo span{color:rgba(201,116,122,0.5);}
+  .footer-tagline{
+    font-size:11px;
+    color:rgba(245,240,232,0.18);
+    letter-spacing:0.06em;
+    font-style:italic;
+    font-family:Georgia,serif;
+  }
+
+  /* MOBILE */
+  @media(max-width:600px){
+    nav{padding:1rem 1.25rem;}
+    .nav-links .nav-link{display:none;}
+    .hero-title{font-size:2.25rem;}
+    .stats-bar{grid-template-columns:1fr;}
+    .stat{border-right:none;border-bottom:0.5px solid rgba(201,116,122,0.15);}
+    .creator-grid{grid-template-columns:1fr;}
+    .waitlist-form input{width:100%;}
+    footer{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Silque<span>Fans</span></div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="document.getElementById('who').scrollIntoView({behavior:'smooth'})">For creators</span>
+    <span class="nav-link" onclick="document.getElementById('rules').scrollIntoView({behavior:'smooth'})">How it works</span>
+    <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-eyebrow">Founding creator applications open — first 100 lock in 5% forever</div>
+  <h1 class="hero-title">Your fans. Your terms.<br><em>Your 90%.</em></h1>
+  <p class="hero-sub">The creator platform built for voices the payment processors won't touch. Three rules. Everything else is yours.</p>
+
+  <div id="waitlist">
+    <form class="waitlist-form" name="silquefans-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="silquefans-waitlist">
+      <input type="hidden" name="bot-field" style="display:none">
+      <input type="text" name="name" placeholder="Your name" required>
+      <input type="email" name="email" placeholder="your@email.com" required>
+      <button type="submit">Apply as founding creator</button>
+    </form>
+    <div class="success-msg" id="success-msg">
+      Application received. We'll be in touch before launch. Welcome to SilqueFans.
+    </div>
+    <p class="form-note">First 100 founding creators lock in 5% platform fee — forever.</p>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-number">90%</div>
+    <div class="stat-label">Creator split</div>
+    <div class="stat-desc">OnlyFans keeps 20%. We keep 10%. The math is simple.</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">3</div>
+    <div class="stat-label">Rules. That's it.</div>
+    <div class="stat-desc">Public, permanent, never change based on advertiser pressure.</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">₿</div>
+    <div class="stat-label">Crypto payouts</div>
+    <div class="stat-desc">BTC, ETH, SOL, USDC and more. No bank required.</div>
+  </div>
+</div>
+
+<!-- WHO IS THIS FOR -->
+<section class="section" id="who">
+  <div class="section-label">Built for creators who've been told no</div>
+  <div class="creator-grid">
+    <div class="creator-card">
+      <div class="creator-type">2A creators</div>
+      <div class="creator-desc">Banned from OnlyFans for combining firearms with adult content. Your audience is waiting.</div>
+    </div>
+    <div class="creator-card">
+      <div class="creator-type">Debanked creators</div>
+      <div class="creator-desc">Eastern European and international creators cut off by payment processors. Crypto solves this.</div>
+    </div>
+    <div class="creator-card">
+      <div class="creator-type">Suggestive lifestyle</div>
+      <div class="creator-desc">Fitness, ASMR, intimacy coaching — fully clothed, algorithm-suppressed. Not here.</div>
+    </div>
+    <div class="creator-card">
+      <div class="creator-type">Adult content creators</div>
+      <div class="creator-desc">Better economics than OnlyFans. Crypto payouts. An appeals process that actually works.</div>
+    </div>
+    <div class="creator-card">
+      <div class="creator-type">Fetish creators</div>
+      <div class="creator-desc">Legal content banned from mainstream platforms for being outside the norm. Legal is the only standard that matters.</div>
+    </div>
+    <div class="creator-card">
+      <div class="creator-type">International creators</div>
+      <div class="creator-desc">Geography shouldn't determine who gets paid. Crypto payouts serve every timezone.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE RULES -->
+<section class="rules-section" id="rules">
+  <h2 class="rules-title">Three rules. Everything else is yours.</h2>
+  <p class="rules-sub">These rules are public, permanent, and will never change based on advertiser pressure or political mood.</p>
+  <div class="rules-list">
+    <div class="rule">
+      <span class="rule-num">01</span>
+      <span class="rule-text"><strong>No content involving minors. Ever.</strong> Zero tolerance, zero ambiguity, zero exceptions.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num">02</span>
+      <span class="rule-text"><strong>Documented consent for all content involving other people.</strong> Protects creators as much as it protects the platform.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num">03</span>
+      <span class="rule-text"><strong>No non-consensual content of any kind.</strong> Everything else that is legal in the United States is your choice.</span>
+    </div>
+  </div>
+  <p class="rules-footer">"We did not ban you for what you believe. We banned you for what you specifically did."</p>
+</section>
+
+<!-- COMPARE -->
+<section class="compare-section" id="compare">
+  <div class="section-label">How we compare</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Platform</th>
+        <th>Creator take</th>
+        <th>Crypto payouts</th>
+        <th>Appeal process</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight">
+        <td>SilqueFans</td>
+        <td class="yes">90%</td>
+        <td class="yes">Yes</td>
+        <td class="yes">Mandatory</td>
+      </tr>
+      <tr>
+        <td>OnlyFans</td>
+        <td>80%</td>
+        <td class="no">No</td>
+        <td class="no">None</td>
+      </tr>
+      <tr>
+        <td>Fansly</td>
+        <td>80%</td>
+        <td class="no">No</td>
+        <td class="no">Limited</td>
+      </tr>
+      <tr>
+        <td>Patreon</td>
+        <td>85–88%</td>
+        <td class="no">No</td>
+        <td class="no">None</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="bottom-cta">
+  <h2 class="bottom-cta-title">If they won't carry it — we will.</h2>
+  <p class="bottom-cta-sub">Founding creator applications are open. First 100 lock in 5% platform fee forever.</p>
+  <form class="waitlist-form" name="silquefans-waitlist-bottom" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+    <input type="hidden" name="form-name" value="silquefans-waitlist-bottom">
+    <input type="hidden" name="bot-field" style="display:none">
+    <input type="text" name="name" placeholder="Your name" required>
+    <input type="email" name="email" placeholder="your@email.com" required>
+    <button type="submit">Apply as founding creator</button>
+  </form>
+</section>
+
+<footer>
+  <div class="footer-logo">Silque<span>Fans</span></div>
+  <div class="footer-tagline">If they won't carry it, we will.</div>
+</footer>
+
+<script>
+function handleSubmit(e){
+  e.preventDefault();
+  var form=e.target;
+  var data=new FormData(form);
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()})
+  .then(function(){
+    form.style.display='none';
+    var msg=document.getElementById('success-msg');
+    if(msg){msg.style.display='block';}
+    document.querySelector('.form-note').style.display='none';
+  })
+  .catch(function(){
+    alert('Something went wrong. Please try again.');
+  });
+}
+</script>
+
+</body>
+</html>
