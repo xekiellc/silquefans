@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SilqueFans</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NPB5Q7NTE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1NPB5Q7NTE');</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -63,17 +65,15 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="/" class="logo">Silque<span>Fans</span></a>
   <div class="nav-links">
+    <a href="/explore.html" class="nav-link">Explore</a>
     <span class="nav-link" id="nav-user"></span>
     <button class="nav-btn" id="nav-action" onclick="navAction()">Sign in</button>
   </div>
 </nav>
-
 <div class="loading" id="loading"><div class="spinner"></div></div>
-
 <div id="profile-container" style="display:none;">
   <div class="profile-hero">
     <div class="cover"></div>
@@ -97,57 +97,28 @@
     <div id="posts-container"></div>
   </div>
 </div>
-
 <div class="not-found" id="not-found" style="display:none;">
   <h1>Creator not found.</h1>
   <p>This profile doesn't exist or may have been removed.</p>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
 const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
 let currentUser=null,creatorProfile=null,isSubscribed=false;
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-function getUsername(){
-  return new URLSearchParams(window.location.search).get('u')||new URLSearchParams(window.location.search).get('username');
-}
-
-function navAction(){
-  window.location.href=currentUser?'/dashboard.html':'/login.html';
-}
-
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function getUsername(){return new URLSearchParams(window.location.search).get('u')||new URLSearchParams(window.location.search).get('username');}
+function navAction(){window.location.href=currentUser?'/dashboard.html':'/login.html';}
 async function checkSession(){
   const{data:{session}}=await _sb.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    document.getElementById('nav-user').textContent='@'+(currentUser.email?.split('@')[0]||'');
-    document.getElementById('nav-action').textContent='Dashboard';
-  }
+  if(session){currentUser=session.user;document.getElementById('nav-user').textContent='@'+(currentUser.email?.split('@')[0]||'');document.getElementById('nav-action').textContent='Dashboard';}
 }
-
 async function loadCreator(){
   const username=getUsername();
-  if(!username){
-    document.getElementById('loading').style.display='none';
-    document.getElementById('not-found').style.display='block';
-    return;
-  }
+  if(!username){document.getElementById('loading').style.display='none';document.getElementById('not-found').style.display='block';return;}
   const{data:profile,error}=await _sb.from('profiles').select('*').eq('username',username).single();
-  if(error||!profile){
-    document.getElementById('loading').style.display='none';
-    document.getElementById('not-found').style.display='block';
-    return;
-  }
+  if(error||!profile){document.getElementById('loading').style.display='none';document.getElementById('not-found').style.display='block';return;}
   creatorProfile=profile;
   document.title=(profile.display_name||profile.username)+' — SilqueFans';
   const initial=(profile.display_name||profile.username||'?')[0].toUpperCase();
@@ -165,7 +136,6 @@ async function loadCreator(){
   document.getElementById('loading').style.display='none';
   document.getElementById('profile-container').style.display='block';
 }
-
 async function loadPosts(creatorId){
   const{data:posts}=await _sb.from('content').select('*').eq('creator_id',creatorId).eq('is_published',true).order('created_at',{ascending:false});
   const container=document.getElementById('posts-container');
@@ -180,23 +150,13 @@ async function loadPosts(creatorId){
     return`<div class="locked-post"><div class="post-header" style="margin-bottom:0.75rem;"><span class="post-type">${post.content_type}</span><span class="post-date">${date}</span></div><div class="locked-preview">${preview}...</div><div class="locked-overlay"><div class="lock-icon">🔒</div><div class="lock-text">Subscribers only</div><div class="lock-price">$${creatorProfile?.subscription_price||'9.99'}/month</div></div></div>`;
   }).join('');
 }
-
-function escapeHtml(str){
-  if(!str)return'';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
+function escapeHtml(str){if(!str)return'';return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 async function handleSubscribe(){
   if(!currentUser){window.location.href='/login.html?redirect='+encodeURIComponent(window.location.href);return;}
   if(isSubscribed){showToast('You are already subscribed.');return;}
   showToast('Subscriptions coming soon. Payments are being set up.');
 }
-
-async function init(){
-  await checkSession();
-  await loadCreator();
-}
-
+async function init(){await checkSession();await loadCreator();}
 init();
 </script>
 </body>
