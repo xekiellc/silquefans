@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create Account — SilqueFans</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NPB5Q7NTE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1NPB5Q7NTE');</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -42,12 +44,10 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="/" class="logo">Silque<span>Fans</span></a>
   <a href="/login.html" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.45);">Sign in</a>
 </nav>
-
 <div class="main">
   <div class="card">
     <h1 class="card-title">Create your account.</h1>
@@ -81,40 +81,24 @@
     <div class="link-row">Already have an account? <a href="/login.html">Sign in</a></div>
   </div>
 </div>
-
 <footer><div class="footer-logo">Silque<span>Fans</span></div></footer>
-
 <script>
 const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
 let accountType='fan';
-
 function setType(type){
   accountType=type;
   document.getElementById('btn-fan').classList.toggle('active',type==='fan');
   document.getElementById('btn-creator').classList.toggle('active',type==='creator');
   document.getElementById('creator-note').style.display=type==='creator'?'block':'none';
 }
-
 function sanitizeUsername(input){
   input.value=input.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
   document.getElementById('username-preview').textContent=input.value||'yourname';
 }
-
-function showError(msg){
-  const el=document.getElementById('error-msg');
-  el.textContent=msg;el.style.display='block';
-  document.getElementById('success-msg').style.display='none';
-}
-
-function showSuccess(msg){
-  const el=document.getElementById('success-msg');
-  el.innerHTML=msg;el.style.display='block';
-  document.getElementById('error-msg').style.display='none';
-}
-
+function showError(msg){const el=document.getElementById('error-msg');el.textContent=msg;el.style.display='block';document.getElementById('success-msg').style.display='none';}
+function showSuccess(msg){const el=document.getElementById('success-msg');el.innerHTML=msg;el.style.display='block';document.getElementById('error-msg').style.display='none';}
 async function handleSignup(){
   const displayName=document.getElementById('display-name').value.trim();
   const username=document.getElementById('username').value.trim();
@@ -128,21 +112,13 @@ async function handleSignup(){
   btn.disabled=true;btn.textContent='Creating account...';
   const{data:existing}=await _sb.from('profiles').select('username').eq('username',username).single();
   if(existing){showError('That username is already taken.');btn.disabled=false;btn.textContent='Create account';return;}
-  const{data,error}=await _sb.auth.signUp({
-    email,password,
-    options:{data:{username,full_name:displayName,account_type:accountType}}
-  });
+  const{data,error}=await _sb.auth.signUp({email,password,options:{data:{username,full_name:displayName,account_type:accountType}}});
   if(error){showError(error.message);btn.disabled=false;btn.textContent='Create account';return;}
-  if(data.user){
-    await _sb.from('profiles').update({account_type:accountType,display_name:displayName}).eq('id',data.user.id);
-  }
+  if(data.user){await _sb.from('profiles').update({account_type:accountType,display_name:displayName}).eq('id',data.user.id);}
   showSuccess('Account created! Check your email to confirm your address, then <a href="/login.html" style="color:#c9a96e;">sign in here</a>.');
   btn.textContent='Account created';
 }
-
-_sb.auth.getSession().then(({data:{session}})=>{
-  if(session)window.location.href='/dashboard.html';
-});
+_sb.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='/dashboard.html';});
 </script>
 </body>
 </html>
