@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign In — SilqueFans</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NPB5Q7NTE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1NPB5Q7NTE');</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -37,12 +39,10 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="/" class="logo">Silque<span>Fans</span></a>
   <a href="/signup.html" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.45);">Create account</a>
 </nav>
-
 <div class="main">
   <div class="card">
     <h1 class="card-title">Welcome back.</h1>
@@ -58,36 +58,18 @@
       <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="btn" id="login-btn" onclick="handleLogin()">Sign in</button>
-    <div class="divider">
-      <div class="divider-line"></div>
-      <span class="divider-text">or</span>
-      <div class="divider-line"></div>
-    </div>
+    <div class="divider"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
     <div class="link-row">Don't have an account? <a href="/signup.html">Sign up</a></div>
-    <div class="link-row" style="margin-top:0.75rem;">
-      <a href="#" style="color:rgba(245,240,232,0.3);font-size:12px;">Forgot password?</a>
-    </div>
+    <div class="link-row" style="margin-top:0.75rem;"><a href="#" style="color:rgba(245,240,232,0.3);font-size:12px;">Forgot password?</a></div>
   </div>
 </div>
-
 <footer><div class="footer-logo">Silque<span>Fans</span></div></footer>
-
 <script>
 const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
-function showError(msg){
-  const el=document.getElementById('error-msg');
-  el.textContent=msg;el.style.display='block';
-  document.getElementById('success-msg').style.display='none';
-}
-function showSuccess(msg){
-  const el=document.getElementById('success-msg');
-  el.textContent=msg;el.style.display='block';
-  document.getElementById('error-msg').style.display='none';
-}
-
+function showError(msg){const el=document.getElementById('error-msg');el.textContent=msg;el.style.display='block';document.getElementById('success-msg').style.display='none';}
+function showSuccess(msg){const el=document.getElementById('success-msg');el.textContent=msg;el.style.display='block';document.getElementById('error-msg').style.display='none';}
 async function handleLogin(){
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
@@ -99,12 +81,8 @@ async function handleLogin(){
   showSuccess('Signed in. Redirecting...');
   setTimeout(()=>{window.location.href='/dashboard.html';},1000);
 }
-
 document.addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
-
-_sb.auth.getSession().then(({data:{session}})=>{
-  if(session)window.location.href='/dashboard.html';
-});
+_sb.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='/dashboard.html';});
 </script>
 </body>
 </html>
