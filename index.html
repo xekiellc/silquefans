@@ -35,8 +35,8 @@
   a{color:inherit;text-decoration:none;}
 
   /* NAV */
-  nav{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 3rem;background:var(--bg);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
-  .nav-logo img{height:52px;width:auto;display:block;mix-blend-mode:multiply;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 3rem;background:var(--bg);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
+  .nav-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.75rem;font-weight:300;font-style:italic;color:var(--pink);letter-spacing:0.02em;cursor:pointer;}
   .nav-links{display:flex;gap:2rem;align-items:center;}
   .nav-link{font-size:11px;letter-spacing:0.1em;color:var(--ink-35);text-transform:uppercase;font-weight:400;transition:color 0.2s;}
   .nav-link:hover{color:var(--ink);}
@@ -45,8 +45,8 @@
 
   /* HERO */
   .hero{padding:3rem 3rem 4rem;text-align:center;background:var(--bg);}
-  .hero-logo{margin:0 auto 1.5rem;width:min(480px,70vw);position:relative;}
-  .hero-logo img{width:100%;height:auto;display:block;mix-blend-mode:multiply;}
+  .hero-logo{margin:0 auto 1.5rem;width:min(500px,72vw);}
+  .hero-logo img{width:100%;height:auto;display:block;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.05);}
   .hero-tag{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-style:italic;color:var(--pink);letter-spacing:0.06em;margin-bottom:1.25rem;display:block;}
   .hero-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;color:var(--ink);margin-bottom:1rem;letter-spacing:-0.01em;}
   .hero-title em{font-style:italic;color:var(--pink);}
@@ -110,7 +110,7 @@
   /* CTA */
   .cta-section{padding:7rem 3rem;text-align:center;background:var(--bg);}
   .cta-logo{margin:0 auto 2rem;width:min(360px,60vw);}
-  .cta-logo img{width:100%;height:auto;mix-blend-mode:multiply;}
+  .cta-logo img{width:100%;height:auto;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.05);}
   .cta-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;margin-bottom:1rem;letter-spacing:-0.01em;}
   .cta-title em{font-style:italic;color:var(--pink);}
   .cta-sub{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:var(--ink-60);margin-bottom:2.5rem;}
@@ -120,18 +120,18 @@
 
   /* FOOTER */
   footer{border-top:0.5px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;background:var(--bg);}
-  .footer-logo img{height:36px;width:auto;mix-blend-mode:multiply;}
+  .footer-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.25rem;font-weight:300;font-style:italic;color:var(--pink);letter-spacing:0.02em;}
   .footer-links{display:flex;gap:1.5rem;}
   .footer-link{font-size:11px;color:var(--ink-35);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;}
   .footer-link:hover{color:var(--ink);}
   .footer-copy{font-family:'Cormorant Garamond',Georgia,serif;font-size:12px;font-style:italic;color:var(--ink-35);}
 
   @media(max-width:768px){
-    nav{padding:0.6rem 1.5rem;}
-    .nav-logo img{height:40px;}
+    nav{padding:0.9rem 1.5rem;}
+    .nav-logo{font-size:1.4rem;}
     .nav-links .nav-link{display:none;}
     .hero{padding:2.5rem 1.5rem 3rem;}
-    .hero-logo{width:min(300px,80vw);}
+    .hero-logo{width:min(300px,82vw);}
     .hero-title{font-size:2.25rem;}
     .form-row{flex-direction:column;}
     .metrics{grid-template-columns:1fr;}
@@ -148,7 +148,7 @@
 <body>
 
 <nav>
-  <a href="/" class="nav-logo"><img src="/image.jpg" alt="SilqueFans"></a>
+  <a href="/" class="nav-logo">SilqueFans</a>
   <div class="nav-links">
     <a href="/explore.html" class="nav-link">Explore</a>
     <a href="#creators" class="nav-link">For creators</a>
@@ -227,7 +227,7 @@
   </div>
 </section>
 
-<section class="section" id="rules" style="background:var(--bg);">
+<section class="section" id="rules">
   <div class="rules-inner">
     <div>
       <span class="section-tag">the platform rules</span>
@@ -330,7 +330,7 @@
 </section>
 
 <footer>
-  <div class="footer-logo"><img src="/image.jpg" alt="SilqueFans"></div>
+  <div class="footer-logo">SilqueFans</div>
   <div class="footer-links">
     <a href="/terms.html" class="footer-link">Terms</a>
     <a href="/privacy.html" class="footer-link">Privacy</a>
