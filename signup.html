@@ -52,19 +52,13 @@
   <div class="card">
     <h1 class="card-title">Create your account.</h1>
     <p class="card-sub">Join as a creator or a fan. No restrictions on legal content.</p>
-
     <div class="account-toggle">
       <button class="toggle-btn active" id="btn-fan" onclick="setType('fan')">I'm a fan</button>
       <button class="toggle-btn" id="btn-creator" onclick="setType('creator')">I'm a creator</button>
     </div>
-
-    <div class="creator-note" id="creator-note">
-      Founding creator status — first 100 creators lock in 5% platform fee forever. You're early.
-    </div>
-
+    <div class="creator-note" id="creator-note">Founding creator status — first 100 creators lock in 5% platform fee forever. You're early.</div>
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
-
     <div class="field">
       <label>Display name</label>
       <input type="text" id="display-name" placeholder="How you appear on the platform">
@@ -82,124 +76,73 @@
       <label>Password</label>
       <input type="password" id="password" placeholder="Minimum 8 characters" autocomplete="new-password">
     </div>
-
     <button class="btn" id="signup-btn" onclick="handleSignup()">Create account</button>
-
-    <p class="terms">
-      By creating an account you agree to our
-      <a href="/terms.html">Terms of Service</a> and
-      <a href="/privacy.html">Privacy Policy</a>.
-      You confirm you are 18 years of age or older.
-    </p>
-
-    <div class="link-row">
-      Already have an account? <a href="/login.html">Sign in</a>
-    </div>
+    <p class="terms">By creating an account you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. You confirm you are 18 years of age or older.</p>
+    <div class="link-row">Already have an account? <a href="/login.html">Sign in</a></div>
   </div>
 </div>
 
-<footer>
-  <div class="footer-logo">Silque<span>Fans</span></div>
-</footer>
+<footer><div class="footer-logo">Silque<span>Fans</span></div></footer>
 
 <script>
-  const SUPABASE_URL = 'https://xeymbpxllgxyxzwsypcp.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
+const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-  let accountType = 'fan';
+let accountType='fan';
 
-  function setType(type){
-    accountType = type;
-    document.getElementById('btn-fan').classList.toggle('active', type==='fan');
-    document.getElementById('btn-creator').classList.toggle('active', type==='creator');
-    document.getElementById('creator-note').style.display = type==='creator' ? 'block' : 'none';
-  }
+function setType(type){
+  accountType=type;
+  document.getElementById('btn-fan').classList.toggle('active',type==='fan');
+  document.getElementById('btn-creator').classList.toggle('active',type==='creator');
+  document.getElementById('creator-note').style.display=type==='creator'?'block':'none';
+}
 
-  function sanitizeUsername(input){
-    input.value = input.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
-    document.getElementById('username-preview').textContent = input.value || 'yourname';
-  }
+function sanitizeUsername(input){
+  input.value=input.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
+  document.getElementById('username-preview').textContent=input.value||'yourname';
+}
 
-  function showError(msg){
-    const el=document.getElementById('error-msg');
-    el.textContent=msg;
-    el.style.display='block';
-    document.getElementById('success-msg').style.display='none';
-  }
+function showError(msg){
+  const el=document.getElementById('error-msg');
+  el.textContent=msg;el.style.display='block';
+  document.getElementById('success-msg').style.display='none';
+}
 
-  function showSuccess(msg){
-    const el=document.getElementById('success-msg');
-    el.innerHTML=msg;
-    el.style.display='block';
-    document.getElementById('error-msg').style.display='none';
-  }
+function showSuccess(msg){
+  const el=document.getElementById('success-msg');
+  el.innerHTML=msg;el.style.display='block';
+  document.getElementById('error-msg').style.display='none';
+}
 
-  async function handleSignup(){
-    const displayName=document.getElementById('display-name').value.trim();
-    const username=document.getElementById('username').value.trim();
-    const email=document.getElementById('email').value.trim();
-    const password=document.getElementById('password').value;
-    const btn=document.getElementById('signup-btn');
-
-    if(!displayName){showError('Please enter a display name.');return;}
-    if(!username||username.length<3){showError('Username must be at least 3 characters.');return;}
-    if(!email){showError('Please enter your email.');return;}
-    if(!password||password.length<8){showError('Password must be at least 8 characters.');return;}
-
-    btn.disabled=true;
-    btn.textContent='Creating account...';
-
-    // Check username availability
-    const{data:existing}=await supabase
-      .from('profiles')
-      .select('username')
-      .eq('username',username)
-      .single();
-
-    if(existing){
-      showError('That username is already taken. Please choose another.');
-      btn.disabled=false;
-      btn.textContent='Create account';
-      return;
-    }
-
-    const{data,error}=await supabase.auth.signUp({
-      email,
-      password,
-      options:{
-        data:{
-          username,
-          full_name:displayName,
-          account_type:accountType
-        }
-      }
-    });
-
-    if(error){
-      showError(error.message);
-      btn.disabled=false;
-      btn.textContent='Create account';
-      return;
-    }
-
-    // Update profile with account type
-    if(data.user){
-      await supabase
-        .from('profiles')
-        .update({account_type:accountType,display_name:displayName})
-        .eq('id',data.user.id);
-    }
-
-    showSuccess('Account created! Check your email to confirm your address, then <a href="/login.html" style="color:#c9a96e;">sign in here</a>.');
-    btn.textContent='Account created';
-  }
-
-  // Redirect if already logged in
-  supabase.auth.getSession().then(({data:{session}})=>{
-    if(session)window.location.href='/dashboard.html';
+async function handleSignup(){
+  const displayName=document.getElementById('display-name').value.trim();
+  const username=document.getElementById('username').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const btn=document.getElementById('signup-btn');
+  if(!displayName){showError('Please enter a display name.');return;}
+  if(!username||username.length<3){showError('Username must be at least 3 characters.');return;}
+  if(!email){showError('Please enter your email.');return;}
+  if(!password||password.length<8){showError('Password must be at least 8 characters.');return;}
+  btn.disabled=true;btn.textContent='Creating account...';
+  const{data:existing}=await _sb.from('profiles').select('username').eq('username',username).single();
+  if(existing){showError('That username is already taken.');btn.disabled=false;btn.textContent='Create account';return;}
+  const{data,error}=await _sb.auth.signUp({
+    email,password,
+    options:{data:{username,full_name:displayName,account_type:accountType}}
   });
-</script>
+  if(error){showError(error.message);btn.disabled=false;btn.textContent='Create account';return;}
+  if(data.user){
+    await _sb.from('profiles').update({account_type:accountType,display_name:displayName}).eq('id',data.user.id);
+  }
+  showSuccess('Account created! Check your email to confirm your address, then <a href="/login.html" style="color:#c9a96e;">sign in here</a>.');
+  btn.textContent='Account created';
+}
 
+_sb.auth.getSession().then(({data:{session}})=>{
+  if(session)window.location.href='/dashboard.html';
+});
+</script>
 </body>
 </html>
