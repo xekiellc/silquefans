@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — SilqueFans</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#0d0b0f;color:#f5f0e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+
+  /* NAV */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:0.5px solid rgba(201,116,122,0.2);position:sticky;top:0;background:#0d0b0f;z-index:100;}
+  .logo{font-size:1.3rem;font-weight:300;letter-spacing:0.14em;font-family:Georgia,serif;}
+  .logo span{color:#c9747a;}
+  .nav-right{display:flex;align-items:center;gap:1.25rem;}
+  .nav-username{font-size:12px;color:rgba(245,240,232,0.4);letter-spacing:0.05em;}
+  .nav-avatar{width:32px;height:32px;border-radius:50%;background:rgba(201,116,122,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;color:#c9747a;cursor:pointer;border:0.5px solid rgba(201,116,122,0.3);}
+  .btn-signout{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(245,240,232,0.3);cursor:pointer;background:none;border:none;font-family:inherit;}
+  .btn-signout:hover{color:#f5f0e8;}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 57px);}
+
+  /* SIDEBAR */
+  .sidebar{border-right:0.5px solid rgba(201,116,122,0.15);padding:1.5rem 0;}
+  .sidebar-section{margin-bottom:2rem;}
+  .sidebar-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,240,232,0.2);padding:0 1.5rem;margin-bottom:0.75rem;}
+  .sidebar-item{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1.5rem;font-size:13px;color:rgba(245,240,232,0.45);cursor:pointer;transition:all 0.15s;border-left:2px solid transparent;}
+  .sidebar-item:hover{color:#f5f0e8;background:rgba(245,240,232,0.03);}
+  .sidebar-item.active{color:#c9747a;border-left-color:#c9747a;background:rgba(201,116,122,0.06);}
+  .sidebar-icon{font-size:14px;width:16px;text-align:center;}
+
+  /* MAIN */
+  .main{padding:2rem;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* PAGE HEADER */
+  .page-header{margin-bottom:2rem;}
+  .page-title{font-family:Georgia,serif;font-size:1.5rem;font-weight:300;margin-bottom:0.25rem;}
+  .page-sub{font-size:13px;color:rgba(245,240,232,0.4);}
+
+  /* STAT CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+  .stat-card{background:rgba(245,240,232,0.04);border:0.5px solid rgba(201,116,122,0.15);padding:1.25rem;}
+  .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(245,240,232,0.3);margin-bottom:0.5rem;}
+  .stat-value{font-family:Georgia,serif;font-size:1.75rem;font-weight:300;color:#f5f0e8;}
+  .stat-value.gold{color:#c9a96e;}
+  .stat-change{font-size:11px;color:rgba(245,240,232,0.25);margin-top:0.25rem;}
+
+  /* CONTENT AREA */
+  .content-area{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;}
+  .panel{background:rgba(245,240,232,0.03);border:0.5px solid rgba(201,116,122,0.15);padding:1.25rem;}
+  .panel-title{font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(245,240,232,0.3);margin-bottom:1.25rem;padding-bottom:0.75rem;border-bottom:0.5px solid rgba(201,116,122,0.1);}
+
+  /* POST COMPOSER */
+  .composer textarea{width:100%;background:rgba(245,240,232,0.04);border:0.5px solid rgba(201,116,122,0.2);color:#f5f0e8;padding:1rem;font-size:14px;font-family:inherit;resize:vertical;min-height:120px;outline:none;transition:border-color 0.2s;}
+  .composer textarea:focus{border-color:#c9747a;}
+  .composer textarea::placeholder{color:rgba(245,240,232,0.2);}
+  .composer-footer{display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;flex-wrap:wrap;gap:0.5rem;}
+  .composer-options{display:flex;gap:0.5rem;}
+  .composer-type{background:transparent;border:0.5px solid rgba(201,116,122,0.2);color:rgba(245,240,232,0.5);padding:0.4rem 0.75rem;font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;}
+  .composer-type.active,.composer-type:hover{border-color:#c9747a;color:#c9747a;}
+  .tier-select{background:rgba(245,240,232,0.04);border:0.5px solid rgba(201,116,122,0.2);color:rgba(245,240,232,0.6);padding:0.4rem 0.75rem;font-size:11px;font-family:inherit;outline:none;}
+  .btn-post{background:#c9747a;color:#0d0b0f;border:none;padding:0.5rem 1.25rem;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:inherit;font-weight:500;transition:background 0.2s;}
+  .btn-post:hover{background:#e8a0a5;}
+  .btn-post:disabled{opacity:0.4;cursor:not-allowed;}
+
+  /* POSTS LIST */
+  .posts-list{margin-top:1.5rem;}
+  .post-item{border:0.5px solid rgba(201,116,122,0.12);padding:1rem;margin-bottom:0.75rem;transition:border-color 0.2s;}
+  .post-item:hover{border-color:rgba(201,116,122,0.3);}
+  .post-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;}
+  .post-type-badge{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#c9747a;background:rgba(201,116,122,0.1);padding:0.2rem 0.5rem;}
+  .post-tier-badge{font-size:10px;color:rgba(245,240,232,0.3);}
+  .post-body{font-size:13px;color:rgba(245,240,232,0.7);line-height:1.6;}
+  .post-stats{display:flex;gap:1rem;margin-top:0.5rem;}
+  .post-stat{font-size:11px;color:rgba(245,240,232,0.25);}
+  .empty-state{text-align:center;padding:3rem 1rem;color:rgba(245,240,232,0.2);font-size:13px;font-style:italic;font-family:Georgia,serif;}
+
+  /* SIDEBAR PANELS */
+  .quick-stat{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:0.5px solid rgba(245,240,232,0.05);font-size:13px;}
+  .quick-stat:last-child{border-bottom:none;}
+  .quick-stat-label{color:rgba(245,240,232,0.35);}
+  .quick-stat-value{color:#f5f0e8;font-weight:500;}
+  .quick-stat-value.gold{color:#c9a96e;}
+
+  /* PROFILE PAGE */
+  .profile-form .field{margin-bottom:1.25rem;}
+  .profile-form label{display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:0.5rem;}
+  .profile-form input,.profile-form textarea,.profile-form select{width:100%;background:rgba(245,240,232,0.05);border:0.5px solid rgba(201,116,122,0.2);color:#f5f0e8;padding:0.75rem 1rem;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;}
+  .profile-form input:focus,.profile-form textarea:focus{border-color:#c9747a;}
+  .profile-form input::placeholder,.profile-form textarea::placeholder{color:rgba(245,240,232,0.2);}
+  .profile-form textarea{resize:vertical;min-height:100px;}
+  .btn-save{background:#c9747a;color:#0d0b0f;border:none;padding:0.75rem 2rem;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:inherit;font-weight:500;transition:background 0.2s;}
+  .btn-save:hover{background:#e8a0a5;}
+  .save-confirm{font-size:12px;color:#c9a96e;margin-left:1rem;display:none;}
+
+  /* SUBSCRIPTION PRICING */
+  .pricing-box{border:0.5px solid rgba(201,116,122,0.2);padding:1.25rem;margin-bottom:1rem;}
+  .pricing-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,240,232,0.3);margin-bottom:0.75rem;}
+  .price-input-row{display:flex;align-items:center;gap:0.5rem;}
+  .price-prefix{font-size:1.1rem;color:rgba(245,240,232,0.4);}
+  .price-input{background:rgba(245,240,232,0.05);border:0.5px solid rgba(201,116,122,0.2);color:#f5f0e8;padding:0.6rem 0.75rem;font-size:1.25rem;font-family:inherit;outline:none;width:100px;text-align:center;}
+  .price-input:focus{border-color:#c9747a;}
+  .price-note{font-size:11px;color:rgba(245,240,232,0.25);margin-top:0.5rem;}
+
+  /* LOADING */
+  .loading{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0d0b0f;}
+  .spinner{width:28px;height:28px;border:1.5px solid rgba(201,116,122,0.2);border-top-color:#c9747a;border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:2rem;right:2rem;background:#1a1520;border:0.5px solid rgba(201,116,122,0.3);color:#f5f0e8;padding:0.85rem 1.25rem;font-size:13px;display:none;z-index:999;max-width:320px;}
+  .toast.show{display:block;}
+
+  @media(max-width:768px){
+    .layout{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .content-area{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+</div>
+
+<div id="app" style="display:none;">
+
+<nav>
+  <a href="/" class="logo">Silque<span>Fans</span></a>
+  <div class="nav-right">
+    <span class="nav-username" id="nav-username"></span>
+    <div class="nav-avatar" id="nav-avatar"></div>
+    <button class="btn-signout" onclick="handleSignout()">Sign out</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Creator</div>
+      <div class="sidebar-item active" onclick="showPage('overview')" id="nav-overview">
+        <span class="sidebar-icon">◈</span> Overview
+      </div>
+      <div class="sidebar-item" onclick="showPage('content')" id="nav-content">
+        <span class="sidebar-icon">◇</span> My content
+      </div>
+      <div class="sidebar-item" onclick="showPage('subscribers')" id="nav-subscribers">
+        <span class="sidebar-icon">◎</span> Subscribers
+      </div>
+      <div class="sidebar-item" onclick="showPage('earnings')" id="nav-earnings">
+        <span class="sidebar-icon">◈</span> Earnings
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Account</div>
+      <div class="sidebar-item" onclick="showPage('profile')" id="nav-profile">
+        <span class="sidebar-icon">◇</span> Profile
+      </div>
+      <div class="sidebar-item" onclick="showPage('settings')" id="nav-settings">
+        <span class="sidebar-icon">◎</span> Settings
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Platform</div>
+      <div class="sidebar-item" onclick="window.location.href='/'">
+        <span class="sidebar-icon">◇</span> View site
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- OVERVIEW PAGE -->
+    <div class="page active" id="page-overview">
+      <div class="page-header">
+        <h1 class="page-title">Welcome back, <span id="welcome-name">creator</span>.</h1>
+        <p class="page-sub">Here's what's happening on your profile.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Subscribers</div>
+          <div class="stat-value" id="stat-subscribers">0</div>
+          <div class="stat-change">Active fans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This month</div>
+          <div class="stat-value gold" id="stat-earnings">$0</div>
+          <div class="stat-change">Your 90%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total posts</div>
+          <div class="stat-value" id="stat-posts">0</div>
+          <div class="stat-change">All content</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total views</div>
+          <div class="stat-value" id="stat-views">0</div>
+          <div class="stat-change">Across all posts</div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div>
+          <!-- COMPOSER -->
+          <div class="panel composer">
+            <div class="panel-title">New post</div>
+            <textarea id="post-body" placeholder="Share something with your fans..."></textarea>
+            <div class="composer-footer">
+              <div class="composer-options">
+                <button class="composer-type active" onclick="setPostType('text',this)">Text</button>
+                <button class="composer-type" onclick="setPostType('image',this)">Image</button>
+                <button class="composer-type" onclick="setPostType('video',this)">Video</button>
+                <select class="tier-select" id="post-tier">
+                  <option value="1">Free preview</option>
+                  <option value="2" selected>Subscribers only</option>
+                  <option value="3">Tier 3</option>
+                  <option value="4">Tier 4</option>
+                </select>
+              </div>
+              <button class="btn-post" id="btn-post" onclick="handlePost()">Publish</button>
+            </div>
+          </div>
+
+          <!-- POSTS LIST -->
+          <div class="posts-list" id="posts-list">
+            <div class="empty-state" id="empty-posts">No posts yet. Write your first one above.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div>
+          <div class="panel" style="margin-bottom:1rem;">
+            <div class="panel-title">Quick stats</div>
+            <div class="quick-stat">
+              <span class="quick-stat-label">Platform fee</span>
+              <span class="quick-stat-value gold" id="platform-fee">10%</span>
+            </div>
+            <div class="quick-stat">
+              <span class="quick-stat-label">Your cut</span>
+              <span class="quick-stat-value gold">90%</span>
+            </div>
+            <div class="quick-stat">
+              <span class="quick-stat-label">Subscription price</span>
+              <span class="quick-stat-value" id="sidebar-price">$9.99/mo</span>
+            </div>
+            <div class="quick-stat">
+              <span class="quick-stat-label">Account type</span>
+              <span class="quick-stat-value" id="sidebar-type">Creator</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">Getting started</div>
+            <div style="font-size:12px;color:rgba(245,240,232,0.35);line-height:1.8;">
+              <div style="margin-bottom:0.5rem;" id="check-profile">◇ Complete your profile</div>
+              <div style="margin-bottom:0.5rem;">◇ Set your subscription price</div>
+              <div style="margin-bottom:0.5rem;">◇ Publish your first post</div>
+              <div style="margin-bottom:0.5rem;">◇ Share your profile link</div>
+              <div>◇ Connect payout method</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT PAGE -->
+    <div class="page" id="page-content">
+      <div class="page-header">
+        <h1 class="page-title">My content</h1>
+        <p class="page-sub">All your posts in one place.</p>
+      </div>
+      <div id="content-list">
+        <div class="empty-state">No content yet. Head to Overview to create your first post.</div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIBERS PAGE -->
+    <div class="page" id="page-subscribers">
+      <div class="page-header">
+        <h1 class="page-title">Subscribers</h1>
+        <p class="page-sub">Your active fan base.</p>
+      </div>
+      <div class="empty-state">No subscribers yet. Share your profile to start growing.</div>
+    </div>
+
+    <!-- EARNINGS PAGE -->
+    <div class="page" id="page-earnings">
+      <div class="page-header">
+        <h1 class="page-title">Earnings</h1>
+        <p class="page-sub">Your revenue. 90% is yours.</p>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card">
+          <div class="stat-label">This month</div>
+          <div class="stat-value gold">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">All time</div>
+          <div class="stat-value gold">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending payout</div>
+          <div class="stat-value gold">$0.00</div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:1rem;">
+        <div class="panel-title">Payout method</div>
+        <p style="font-size:13px;color:rgba(245,240,232,0.35);line-height:1.7;">Stripe and crypto payouts coming soon. You'll be notified when payout setup is available.</p>
+      </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div class="page" id="page-profile">
+      <div class="page-header">
+        <h1 class="page-title">Your profile</h1>
+        <p class="page-sub">This is what fans see when they visit your page.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:1.5rem;">
+        <div class="panel profile-form">
+          <div class="panel-title">Profile details</div>
+          <div class="field">
+            <label>Display name</label>
+            <input type="text" id="profile-display-name" placeholder="Your name">
+          </div>
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="profile-username" placeholder="yourname" disabled style="opacity:0.4;cursor:not-allowed;">
+            <div style="font-size:11px;color:rgba(245,240,232,0.2);margin-top:0.4rem;">Username cannot be changed after signup.</div>
+          </div>
+          <div class="field">
+            <label>Bio</label>
+            <textarea id="profile-bio" placeholder="Tell your fans about yourself..."></textarea>
+          </div>
+          <div class="field">
+            <label>Website</label>
+            <input type="url" id="profile-website" placeholder="https://yoursite.com">
+          </div>
+          <div class="field">
+            <label>Twitter / X</label>
+            <input type="text" id="profile-twitter" placeholder="@yourhandle">
+          </div>
+          <button class="btn-save" onclick="saveProfile()">Save profile</button>
+          <span class="save-confirm" id="save-confirm">Saved.</span>
+        </div>
+
+        <div>
+          <div class="panel pricing-box" style="margin-bottom:1rem;">
+            <div class="panel-title">Subscription pricing</div>
+            <div class="pricing-label">Monthly price</div>
+            <div class="price-input-row">
+              <span class="price-prefix">$</span>
+              <input type="number" class="price-input" id="subscription-price" value="9.99" min="1" max="999" step="0.01">
+              <span style="font-size:13px;color:rgba(245,240,232,0.3);">/mo</span>
+            </div>
+            <div class="price-note">You keep 90%. Platform fee: 10%.</div>
+            <button class="btn-save" style="margin-top:1rem;padding:0.6rem 1.25rem;" onclick="savePrice()">Update price</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">Your profile link</div>
+            <div style="font-size:12px;color:rgba(245,240,232,0.35);margin-bottom:0.75rem;">Share this with your audience.</div>
+            <div style="background:rgba(245,240,232,0.04);border:0.5px solid rgba(201,116,122,0.15);padding:0.6rem 0.85rem;font-size:12px;color:#c9747a;word-break:break-all;" id="profile-link">silquefans.com/@</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+        <p class="page-sub">Account and notification preferences.</p>
+      </div>
+      <div class="panel" style="max-width:500px;">
+        <div class="panel-title">Account</div>
+        <div class="quick-stat">
+          <span class="quick-stat-label">Email</span>
+          <span class="quick-stat-value" id="settings-email" style="font-size:12px;"></span>
+        </div>
+        <div class="quick-stat">
+          <span class="quick-stat-label">Account type</span>
+          <span class="quick-stat-value" id="settings-type"></span>
+        </div>
+        <div class="quick-stat">
+          <span class="quick-stat-label">Member since</span>
+          <span class="quick-stat-value" id="settings-since"></span>
+        </div>
+        <div style="margin-top:1.25rem;padding-top:1rem;border-top:0.5px solid rgba(201,116,122,0.1);">
+          <button class="btn-signout" style="font-size:12px;color:rgba(201,116,122,0.6);" onclick="handleSignout()">Sign out of SilqueFans</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPABASE_URL = 'https://xeymbpxllgxyxzwsypcp.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentUser = null;
+  let currentProfile = null;
+  let currentPostType = 'text';
+  let posts = [];
+
+  function showPage(name){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    const navEl = document.getElementById('nav-'+name);
+    if(navEl) navEl.classList.add('active');
+    if(name==='content') renderContentPage();
+  }
+
+  function setPostType(type, btn){
+    currentPostType = type;
+    document.querySelectorAll('.composer-type').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+  }
+
+  async function loadProfile(){
+    const{data,error}=await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id',currentUser.id)
+      .single();
+    if(data){
+      currentProfile=data;
+      updateUI();
+    }
+  }
+
+  function updateUI(){
+    if(!currentProfile) return;
+    const initial = (currentProfile.display_name||currentProfile.username||'?')[0].toUpperCase();
+    document.getElementById('nav-avatar').textContent=initial;
+    document.getElementById('nav-username').textContent='@'+(currentProfile.username||'');
+    document.getElementById('welcome-name').textContent=currentProfile.display_name||currentProfile.username||'creator';
+    document.getElementById('sidebar-price').textContent='$'+(currentProfile.subscription_price||'9.99')+'/mo';
+    document.getElementById('profile-link').textContent='silquefans.com/@'+(currentProfile.username||'');
+    document.getElementById('settings-email').textContent=currentUser.email||'';
+    document.getElementById('settings-type').textContent=currentProfile.account_type||'creator';
+    document.getElementById('settings-since').textContent=new Date(currentUser.created_at).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    if(currentProfile.subscription_price) document.getElementById('subscription-price').value=currentProfile.subscription_price;
+    if(currentProfile.display_name) document.getElementById('profile-display-name').value=currentProfile.display_name;
+    if(currentProfile.username) document.getElementById('profile-username').value=currentProfile.username;
+    if(currentProfile.bio) document.getElementById('profile-bio').value=currentProfile.bio;
+    if(currentProfile.website_url) document.getElementById('profile-website').value=currentProfile.website_url;
+    if(currentProfile.twitter_url) document.getElementById('profile-twitter').value=currentProfile.twitter_url;
+    if(currentProfile.account_type==='founding') document.getElementById('platform-fee').textContent='5% (founding)';
+  }
+
+  async function loadPosts(){
+    const{data}=await supabase
+      .from('content')
+      .select('*')
+      .eq('creator_id',currentUser.id)
+      .order('created_at',{ascending:false});
+    if(data){
+      posts=data;
+      document.getElementById('stat-posts').textContent=data.length;
+      const totalViews=data.reduce((sum,p)=>sum+(p.view_count||0),0);
+      document.getElementById('stat-views').textContent=totalViews;
+      renderPosts();
+    }
+  }
+
+  function renderPosts(){
+    const list=document.getElementById('posts-list');
+    const empty=document.getElementById('empty-posts');
+    if(!posts.length){empty.style.display='block';return;}
+    empty.style.display='none';
+    const items=posts.map(p=>`
+      <div class="post-item">
+        <div class="post-meta">
+          <span class="post-type-badge">${p.content_type}</span>
+          <span class="post-tier-badge">Tier ${p.tier} · ${p.is_public?'Public':'Subscribers'}</span>
+        </div>
+        <div class="post-body">${p.body||p.title||'(no content)'}</div>
+        <div class="post-stats">
+          <span class="post-stat">${p.view_count||0} views</span>
+          <span class="post-stat">${p.like_count||0} likes</span>
+          <span class="post-stat">${new Date(p.created_at).toLocaleDateString()}</span>
+        </div>
+      </div>
+    `).join('');
+    list.innerHTML=items+`<div class="empty-state" id="empty-posts" style="display:none;"></div>`;
+  }
+
+  function renderContentPage(){
+    const list=document.getElementById('content-list');
+    if(!posts.length){list.innerHTML='<div class="empty-state">No content yet.</div>';return;}
+    list.innerHTML=posts.map(p=>`
+      <div class="post-item">
+        <div class="post-meta">
+          <span class="post-type-badge">${p.content_type}</span>
+          <span class="post-tier-badge">Tier ${p.tier} · ${p.is_public?'Public':'Subscribers only'}</span>
+        </div>
+        <div class="post-body">${p.body||p.title||'(no content)'}</div>
+        <div class="post-stats">
+          <span class="post-stat">${p.view_count||0} views</span>
+          <span class="post-stat">${new Date(p.created_at).toLocaleDateString()}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function handlePost(){
+    const body=document.getElementById('post-body').value.trim();
+    const tier=parseInt(document.getElementById('post-tier').value);
+    const btn=document.getElementById('btn-post');
+    if(!body){showToast('Write something first.');return;}
+    btn.disabled=true;
+    btn.textContent='Publishing...';
+    const{data,error}=await supabase.from('content').insert({
+      creator_id:currentUser.id,
+      body,
+      content_type:currentPostType,
+      tier,
+      is_public:tier===1,
+      is_published:true
+    }).select().single();
+    if(error){showToast('Error publishing post.');btn.disabled=false;btn.textContent='Publish';return;}
+    posts.unshift(data);
+    document.getElementById('post-body').value='';
+    document.getElementById('stat-posts').textContent=posts.length;
+    renderPosts();
+    showToast('Post published.');
+    btn.disabled=false;
+    btn.textContent='Publish';
+  }
+
+  async function saveProfile(){
+    const{error}=await supabase.from('profiles').update({
+      display_name:document.getElementById('profile-display-name').value.trim(),
+      bio:document.getElementById('profile-bio').value.trim(),
+      website_url:document.getElementById('profile-website').value.trim(),
+      twitter_url:document.getElementById('profile-twitter').value.trim()
+    }).eq('id',currentUser.id);
+    if(!error){
+      const confirm=document.getElementById('save-confirm');
+      confirm.style.display='inline';
+      setTimeout(()=>confirm.style.display='none',2500);
+      await loadProfile();
+    }
+  }
+
+  async function savePrice(){
+    const price=parseFloat(document.getElementById('subscription-price').value);
+    if(isNaN(price)||price<1){showToast('Enter a valid price.');return;}
+    const{error}=await supabase.from('profiles').update({subscription_price:price}).eq('id',currentUser.id);
+    if(!error){showToast('Price updated.');await loadProfile();}
+  }
+
+  async function handleSignout(){
+    await supabase.auth.signOut();
+    window.location.href='/login.html';
+  }
+
+  async function init(){
+    const{data:{session}}=await supabase.auth.getSession();
+    if(!session){window.location.href='/login.html';return;}
+    currentUser=session.user;
+    await loadProfile();
+    await loadPosts();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+  }
+
+  init();
+</script>
+
+</body>
+</html>
