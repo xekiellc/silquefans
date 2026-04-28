@@ -49,12 +49,11 @@
   .locked-preview{font-size:14px;color:rgba(245,240,232,0.2);line-height:1.7;filter:blur(4px);user-select:none;pointer-events:none;}
   .locked-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,11,15,0.7);}
   .lock-icon{font-size:1.5rem;margin-bottom:0.5rem;opacity:0.6;}
-  .lock-text{font-size:12px;color:rgba(245,240,232,0.5);text-align:center;line-height:1.6;}
+  .lock-text{font-size:12px;color:rgba(245,240,232,0.5);text-align:center;}
   .lock-price{font-size:13px;color:#c9a96e;margin-top:0.4rem;}
   .empty-posts{text-align:center;padding:4rem 2rem;color:rgba(245,240,232,0.2);font-size:13px;font-style:italic;font-family:Georgia,serif;}
   .toast{position:fixed;bottom:2rem;right:2rem;background:#1a1520;border:0.5px solid rgba(201,116,122,0.3);color:#f5f0e8;padding:0.85rem 1.25rem;font-size:13px;display:none;z-index:999;}
   .toast.show{display:block;}
-  .debug{background:rgba(201,116,122,0.1);border:0.5px solid rgba(201,116,122,0.3);padding:1rem;margin:1rem auto;max-width:760px;font-size:11px;color:rgba(245,240,232,0.5);font-family:monospace;word-break:break-all;}
   @media(max-width:600px){
     nav{padding:1rem 1.25rem;}
     .profile-body{padding:0 1rem 1.5rem;}
@@ -74,11 +73,10 @@
 </nav>
 
 <div class="loading" id="loading"><div class="spinner"></div></div>
-<div class="debug" id="debug" style="display:none;"></div>
 
 <div id="profile-container" style="display:none;">
   <div class="profile-hero">
-    <div class="cover" id="cover"></div>
+    <div class="cover"></div>
     <div class="profile-body">
       <div class="avatar-row">
         <div class="avatar" id="avatar"></div>
@@ -112,15 +110,7 @@ const SUPABASE_URL='https://xeymbpxllgxyxzwsypcp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhleW1icHhsbGd4eXh6d3N5cGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM4MDksImV4cCI6MjA5Mjk2OTgwOX0.c8waNscMcRRupYRiDdcDBRra4nJPiFudvYaOiauAVp0';
 const _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-let currentUser=null;
-let creatorProfile=null;
-let isSubscribed=false;
-
-function showDebug(msg){
-  const d=document.getElementById('debug');
-  d.textContent=msg;
-  d.style.display='block';
-}
+let currentUser=null,creatorProfile=null,isSubscribed=false;
 
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -129,13 +119,11 @@ function showToast(msg){
 }
 
 function getUsername(){
-  const params=new URLSearchParams(window.location.search);
-  return params.get('u')||params.get('username');
+  return new URLSearchParams(window.location.search).get('u')||new URLSearchParams(window.location.search).get('username');
 }
 
 function navAction(){
-  if(currentUser){window.location.href='/dashboard.html';}
-  else{window.location.href='/login.html';}
+  window.location.href=currentUser?'/dashboard.html':'/login.html';
 }
 
 async function checkSession(){
@@ -149,104 +137,47 @@ async function checkSession(){
 
 async function loadCreator(){
   const username=getUsername();
-  showDebug('Looking up username: '+username);
-
   if(!username){
     document.getElementById('loading').style.display='none';
     document.getElementById('not-found').style.display='block';
     return;
   }
-
-  const{data:profile,error}=await _sb
-    .from('profiles')
-    .select('*')
-    .eq('username',username)
-    .single();
-
-  showDebug('Query result — error: '+JSON.stringify(error)+' | profile: '+JSON.stringify(profile));
-
+  const{data:profile,error}=await _sb.from('profiles').select('*').eq('username',username).single();
   if(error||!profile){
     document.getElementById('loading').style.display='none';
     document.getElementById('not-found').style.display='block';
     return;
   }
-
   creatorProfile=profile;
   document.title=(profile.display_name||profile.username)+' — SilqueFans';
-
   const initial=(profile.display_name||profile.username||'?')[0].toUpperCase();
   document.getElementById('avatar').textContent=initial;
   document.getElementById('display-name').textContent=profile.display_name||profile.username;
   document.getElementById('username-display').textContent='@'+profile.username;
   document.getElementById('bio').textContent=profile.bio||'';
   document.getElementById('price-tag').textContent='Subscribe for $'+(profile.subscription_price||'9.99')+'/month';
-
   if(currentUser){
-    const{data:sub}=await _sb.from('subscriptions')
-      .select('id,status')
-      .eq('fan_id',currentUser.id)
-      .eq('creator_id',profile.id)
-      .eq('status','active')
-      .single();
-    if(sub){
-      isSubscribed=true;
-      const btn=document.getElementById('subscribe-btn');
-      btn.textContent='Subscribed';
-      btn.classList.add('subscribed');
-    }
-    if(currentUser.id===profile.id){
-      document.getElementById('subscribe-btn').style.display='none';
-    }
+    const{data:sub}=await _sb.from('subscriptions').select('id').eq('fan_id',currentUser.id).eq('creator_id',profile.id).eq('status','active').single();
+    if(sub){isSubscribed=true;const btn=document.getElementById('subscribe-btn');btn.textContent='Subscribed';btn.classList.add('subscribed');}
+    if(currentUser.id===profile.id)document.getElementById('subscribe-btn').style.display='none';
   }
-
   await loadPosts(profile.id);
-
   document.getElementById('loading').style.display='none';
   document.getElementById('profile-container').style.display='block';
 }
 
 async function loadPosts(creatorId){
-  const{data:posts,error:postsError}=await _sb
-    .from('content')
-    .select('*')
-    .eq('creator_id',creatorId)
-    .eq('is_published',true)
-    .order('created_at',{ascending:false});
-
-  showDebug(document.getElementById('debug').textContent+' | posts error: '+JSON.stringify(postsError)+' | posts count: '+(posts?.length||0));
-
+  const{data:posts}=await _sb.from('content').select('*').eq('creator_id',creatorId).eq('is_published',true).order('created_at',{ascending:false});
   const container=document.getElementById('posts-container');
   document.getElementById('post-count').textContent=posts?.length||0;
-
-  if(!posts||!posts.length){
-    container.innerHTML='<div class="empty-posts">No posts yet.</div>';
-    return;
-  }
-
+  if(!posts||!posts.length){container.innerHTML='<div class="empty-posts">No posts yet.</div>';return;}
   container.innerHTML=posts.map(post=>{
     const date=new Date(post.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     if(post.is_public||isSubscribed||(currentUser?.id===creatorProfile?.id)){
-      return `<div class="post-card">
-        <div class="post-header">
-          <span class="post-type">${post.content_type}</span>
-          <span class="post-date">${date}</span>
-        </div>
-        <div class="post-body">${escapeHtml(post.body||post.title||'')}</div>
-      </div>`;
+      return`<div class="post-card"><div class="post-header"><span class="post-type">${post.content_type}</span><span class="post-date">${date}</span></div><div class="post-body">${escapeHtml(post.body||post.title||'')}</div></div>`;
     }
-    const preview=escapeHtml((post.body||post.title||'Subscribe to read this post.').substring(0,120));
-    return `<div class="locked-post">
-      <div class="post-header" style="margin-bottom:0.75rem;">
-        <span class="post-type">${post.content_type}</span>
-        <span class="post-date">${date}</span>
-      </div>
-      <div class="locked-preview">${preview}...</div>
-      <div class="locked-overlay">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-text">Subscribers only</div>
-        <div class="lock-price">$${creatorProfile?.subscription_price||'9.99'}/month</div>
-      </div>
-    </div>`;
+    const preview=escapeHtml((post.body||'Subscribe to read this post.').substring(0,120));
+    return`<div class="locked-post"><div class="post-header" style="margin-bottom:0.75rem;"><span class="post-type">${post.content_type}</span><span class="post-date">${date}</span></div><div class="locked-preview">${preview}...</div><div class="locked-overlay"><div class="lock-icon">🔒</div><div class="lock-text">Subscribers only</div><div class="lock-price">$${creatorProfile?.subscription_price||'9.99'}/month</div></div></div>`;
   }).join('');
 }
 
@@ -256,10 +187,7 @@ function escapeHtml(str){
 }
 
 async function handleSubscribe(){
-  if(!currentUser){
-    window.location.href='/login.html?redirect='+encodeURIComponent(window.location.href);
-    return;
-  }
+  if(!currentUser){window.location.href='/login.html?redirect='+encodeURIComponent(window.location.href);return;}
   if(isSubscribed){showToast('You are already subscribed.');return;}
   showToast('Subscriptions coming soon. Payments are being set up.');
 }
