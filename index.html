@@ -18,7 +18,6 @@
   html{scroll-behavior:smooth;}
   :root{
     --bg:#f2ede9;
-    --bg2:#ede7e2;
     --white:#faf6f3;
     --pink:#c9829a;
     --pink-dark:#a8607c;
@@ -36,7 +35,7 @@
 
   /* NAV */
   nav{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 3rem;background:var(--bg);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
-  .nav-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.75rem;font-weight:300;font-style:italic;color:var(--pink);letter-spacing:0.02em;cursor:pointer;}
+  .nav-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;font-weight:400;font-style:italic;color:var(--pink);letter-spacing:0.01em;line-height:1;}
   .nav-links{display:flex;gap:2rem;align-items:center;}
   .nav-link{font-size:11px;letter-spacing:0.1em;color:var(--ink-35);text-transform:uppercase;font-weight:400;transition:color 0.2s;}
   .nav-link:hover{color:var(--ink);}
@@ -44,9 +43,18 @@
   .nav-cta:hover{background:var(--pink-dark);}
 
   /* HERO */
-  .hero{padding:3rem 3rem 4rem;text-align:center;background:var(--bg);}
-  .hero-logo{margin:0 auto 1.5rem;width:min(500px,72vw);}
+  .hero{padding:2rem 3rem 4rem;text-align:center;background:var(--bg);}
+  .hero-logo{margin:0 auto 1rem;width:min(520px,74vw);position:relative;}
   .hero-logo img{width:100%;height:auto;display:block;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.05);}
+  .hero-logo::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(to right,var(--bg) 0%,transparent 14%,transparent 86%,var(--bg) 100%),
+      linear-gradient(to bottom,var(--bg) 0%,transparent 10%,transparent 90%,var(--bg) 100%);
+    pointer-events:none;
+  }
   .hero-tag{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-style:italic;color:var(--pink);letter-spacing:0.06em;margin-bottom:1.25rem;display:block;}
   .hero-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;color:var(--ink);margin-bottom:1rem;letter-spacing:-0.01em;}
   .hero-title em{font-style:italic;color:var(--pink);}
@@ -109,8 +117,17 @@
 
   /* CTA */
   .cta-section{padding:7rem 3rem;text-align:center;background:var(--bg);}
-  .cta-logo{margin:0 auto 2rem;width:min(360px,60vw);}
+  .cta-logo{margin:0 auto 0.5rem;width:min(380px,62vw);position:relative;}
   .cta-logo img{width:100%;height:auto;mix-blend-mode:multiply;filter:contrast(1.02) saturate(1.05);}
+  .cta-logo::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(to right,var(--bg) 0%,transparent 14%,transparent 86%,var(--bg) 100%),
+      linear-gradient(to bottom,var(--bg) 0%,transparent 10%,transparent 90%,var(--bg) 100%);
+    pointer-events:none;
+  }
   .cta-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:3rem;font-weight:300;line-height:1.1;margin-bottom:1rem;letter-spacing:-0.01em;}
   .cta-title em{font-style:italic;color:var(--pink);}
   .cta-sub{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:var(--ink-60);margin-bottom:2.5rem;}
@@ -120,7 +137,7 @@
 
   /* FOOTER */
   footer{border-top:0.5px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;background:var(--bg);}
-  .footer-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.25rem;font-weight:300;font-style:italic;color:var(--pink);letter-spacing:0.02em;}
+  .footer-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.35rem;font-weight:400;font-style:italic;color:var(--pink);letter-spacing:0.01em;}
   .footer-links{display:flex;gap:1.5rem;}
   .footer-link{font-size:11px;color:var(--ink-35);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;}
   .footer-link:hover{color:var(--ink);}
@@ -128,10 +145,10 @@
 
   @media(max-width:768px){
     nav{padding:0.9rem 1.5rem;}
-    .nav-logo{font-size:1.4rem;}
+    .nav-logo{font-size:1.5rem;}
     .nav-links .nav-link{display:none;}
-    .hero{padding:2.5rem 1.5rem 3rem;}
-    .hero-logo{width:min(300px,82vw);}
+    .hero{padding:2rem 1.5rem 3rem;}
+    .hero-logo{width:min(300px,84vw);}
     .hero-title{font-size:2.25rem;}
     .form-row{flex-direction:column;}
     .metrics{grid-template-columns:1fr;}
