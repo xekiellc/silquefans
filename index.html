@@ -9,6 +9,8 @@
 <meta property="og:description" content="90/10 split. Crypto payouts. Three rules. Founding creator applications open.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://silquefans.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NPB5Q7NTE"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1NPB5Q7NTE');</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -21,8 +23,6 @@
     overflow-x:hidden;
   }
   a{color:inherit;text-decoration:none;}
-
-  /* NAV */
   nav{
     display:flex;
     justify-content:space-between;
@@ -65,8 +65,6 @@
     font-family:inherit;
   }
   .nav-cta:hover{background:#c9747a;color:#0d0b0f;}
-
-  /* HERO */
   .hero{
     padding:6rem 2rem 5rem;
     text-align:center;
@@ -102,8 +100,6 @@
     margin:0 auto 2.75rem;
     line-height:1.8;
   }
-
-  /* FORM */
   .waitlist-form{
     display:flex;
     gap:10px;
@@ -144,8 +140,6 @@
     color:rgba(245,240,232,0.25);
     letter-spacing:0.05em;
   }
-
-  /* SUCCESS STATE */
   .success-msg{
     display:none;
     background:rgba(201,169,110,0.1);
@@ -158,8 +152,6 @@
     margin:0 auto;
     text-align:center;
   }
-
-  /* STATS BAR */
   .stats-bar{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -194,8 +186,6 @@
     max-width:180px;
     margin:0 auto;
   }
-
-  /* WHO SECTION */
   .section{padding:4rem 2rem;}
   .section-label{
     font-size:10px;
@@ -230,8 +220,6 @@
     color:rgba(245,240,232,0.38);
     line-height:1.7;
   }
-
-  /* RULES SECTION */
   .rules-section{
     padding:4rem 2rem;
     border-top:0.5px solid rgba(201,116,122,0.15);
@@ -291,8 +279,6 @@
     font-style:italic;
     font-family:Georgia,serif;
   }
-
-  /* COMPARE SECTION */
   .compare-section{
     padding:4rem 2rem;
     border-top:0.5px solid rgba(201,116,122,0.15);
@@ -329,8 +315,6 @@
   }
   .yes{color:#c9a96e !important;}
   .no{color:rgba(245,240,232,0.2) !important;}
-
-  /* BOTTOM CTA */
   .bottom-cta{
     padding:5rem 2rem;
     text-align:center;
@@ -348,8 +332,17 @@
     color:rgba(245,240,232,0.4);
     margin-bottom:2.5rem;
   }
-
-  /* FOOTER */
+  .explore-link{
+    display:inline-block;
+    margin-top:1.5rem;
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:rgba(245,240,232,0.35);
+    border-bottom:0.5px solid rgba(245,240,232,0.15);
+    padding-bottom:0.2rem;
+  }
+  .explore-link:hover{color:#f5f0e8;}
   footer{
     border-top:0.5px solid rgba(201,116,122,0.12);
     padding:1.75rem 2.5rem;
@@ -367,6 +360,9 @@
     color:rgba(245,240,232,0.3);
   }
   .footer-logo span{color:rgba(201,116,122,0.5);}
+  .footer-links{display:flex;gap:1.5rem;}
+  .footer-link{font-size:11px;color:rgba(245,240,232,0.2);letter-spacing:0.06em;}
+  .footer-link:hover{color:rgba(245,240,232,0.5);}
   .footer-tagline{
     font-size:11px;
     color:rgba(245,240,232,0.18);
@@ -374,8 +370,6 @@
     font-style:italic;
     font-family:Georgia,serif;
   }
-
-  /* MOBILE */
   @media(max-width:600px){
     nav{padding:1rem 1.25rem;}
     .nav-links .nav-link{display:none;}
@@ -393,13 +387,13 @@
 <nav>
   <div class="logo">Silque<span>Fans</span></div>
   <div class="nav-links">
+    <a href="/explore.html" class="nav-link">Explore creators</a>
     <span class="nav-link" onclick="document.getElementById('who').scrollIntoView({behavior:'smooth'})">For creators</span>
     <span class="nav-link" onclick="document.getElementById('rules').scrollIntoView({behavior:'smooth'})">How it works</span>
-    <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+    <a href="/login.html"><button class="nav-cta">Sign in</button></a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="top">
   <div class="hero-eyebrow">Founding creator applications open — first 100 lock in 5% forever</div>
   <h1 class="hero-title">Your fans. Your terms.<br><em>Your 90%.</em></h1>
@@ -418,9 +412,9 @@
     </div>
     <p class="form-note">First 100 founding creators lock in 5% platform fee — forever.</p>
   </div>
+  <a href="/signup.html" class="explore-link" style="margin-top:2rem;display:inline-block;">Create your account →</a>
 </section>
 
-<!-- STATS BAR -->
 <div class="stats-bar">
   <div class="stat">
     <div class="stat-number">90%</div>
@@ -439,7 +433,6 @@
   </div>
 </div>
 
-<!-- WHO IS THIS FOR -->
 <section class="section" id="who">
   <div class="section-label">Built for creators who've been told no</div>
   <div class="creator-grid">
@@ -461,16 +454,18 @@
     </div>
     <div class="creator-card">
       <div class="creator-type">Fetish creators</div>
-      <div class="creator-desc">Legal content banned from mainstream platforms for being outside the norm. Legal is the only standard that matters.</div>
+      <div class="creator-desc">Legal content banned from mainstream platforms. Legal is the only standard that matters.</div>
     </div>
     <div class="creator-card">
       <div class="creator-type">International creators</div>
       <div class="creator-desc">Geography shouldn't determine who gets paid. Crypto payouts serve every timezone.</div>
     </div>
   </div>
+  <div style="text-align:center;margin-top:2rem;">
+    <a href="/explore.html" class="explore-link">Browse all creators →</a>
+  </div>
 </section>
 
-<!-- THREE RULES -->
 <section class="rules-section" id="rules">
   <h2 class="rules-title">Three rules. Everything else is yours.</h2>
   <p class="rules-sub">These rules are public, permanent, and will never change based on advertiser pressure or political mood.</p>
@@ -489,9 +484,11 @@
     </div>
   </div>
   <p class="rules-footer">"We did not ban you for what you believe. We banned you for what you specifically did."</p>
+  <div style="margin-top:1.5rem;">
+    <a href="/content-policy.html" class="explore-link">Read the full content policy →</a>
+  </div>
 </section>
 
-<!-- COMPARE -->
 <section class="compare-section" id="compare">
   <div class="section-label">How we compare</div>
   <table class="compare-table">
@@ -532,7 +529,6 @@
   </table>
 </section>
 
-<!-- BOTTOM CTA -->
 <section class="bottom-cta">
   <h2 class="bottom-cta-title">If they won't carry it — we will.</h2>
   <p class="bottom-cta-sub">Founding creator applications are open. First 100 lock in 5% platform fee forever.</p>
@@ -543,10 +539,20 @@
     <input type="email" name="email" placeholder="your@email.com" required>
     <button type="submit">Apply as founding creator</button>
   </form>
+  <div style="margin-top:1.5rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
+    <a href="/signup.html" class="explore-link">Create account →</a>
+    <a href="/explore.html" class="explore-link">Explore creators →</a>
+  </div>
 </section>
 
 <footer>
   <div class="footer-logo">Silque<span>Fans</span></div>
+  <div class="footer-links">
+    <a href="/terms.html" class="footer-link">Terms</a>
+    <a href="/privacy.html" class="footer-link">Privacy</a>
+    <a href="/content-policy.html" class="footer-link">Content Policy</a>
+    <a href="/explore.html" class="footer-link">Explore</a>
+  </div>
   <div class="footer-tagline">If they won't carry it, we will.</div>
 </footer>
 
